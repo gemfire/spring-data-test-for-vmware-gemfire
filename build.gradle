@@ -7,7 +7,6 @@ buildscript {
 }
 
 plugins {
-  id 'org.springframework.boot' version "${springBootVersion}" apply false
   id 'idea'
   id 'eclipse'
   id 'java'
@@ -17,8 +16,8 @@ subprojects {
 
   group = 'com.vmware.gemfire'
 
-  sourceCompatibility = '17'
-  targetCompatibility = '17'
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
 
   repositories {
     mavenLocal()
