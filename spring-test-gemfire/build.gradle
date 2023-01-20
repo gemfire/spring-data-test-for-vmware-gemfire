@@ -1,0 +1,33 @@
+plugins {
+  id 'java-library'
+  id "io.freefair.lombok" version "6.5.1"
+  id 'dependency-constraints'
+	id 'gemfire-repo-artifact-publishing'
+  id 'com.netflix.nebula.optional-base' version '8.0.0' // if you want optional-base
+}
+
+
+description = "Spring Test Framework for VMware GemFire"
+
+project.ext.set("pomProjectLongName", description)
+project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${gemfireBaseVersion}")
+project.ext.set("pomProjectDescription", description)
+
+dependencies {
+
+  api "edu.umd.cs.mtc:multithreadedtc:1.01"
+  api "junit:junit"
+  api "org.assertj:assertj-core"
+  api "org.mockito:mockito-core"
+  api "org.projectlombok:lombok"
+  api "org.springframework:spring-test:2.7.7"
+  api "com.vmware.gemfire:spring-data-2.7-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion"
+
+  compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+
+  implementation "ch.qos.logback:logback-classic", optional
+
+  compileOnly('org.springframework.boot:spring-boot-starter') {
+    exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
+  }
+}
