@@ -9,4 +9,3 @@
  */
 
 rootProject.name = 'spring-test-for-vmware-gemfire'
-include('lib')
