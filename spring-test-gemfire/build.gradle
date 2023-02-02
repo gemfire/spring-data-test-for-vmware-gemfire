@@ -20,8 +20,8 @@ dependencies {
   api "org.assertj:assertj-core"
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
-  api "org.springframework:spring-test:2.7.7"
-  api "com.vmware.gemfire:spring-data-2.7-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion"
+  api "org.springframework:spring-test:5.3.25"
+  compileOnly "com.vmware.gemfire:spring-data-2.7-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion"
 
   compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
@@ -30,4 +30,6 @@ dependencies {
   compileOnly('org.springframework.boot:spring-boot-starter') {
     exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
   }
+
+  testImplementation "com.vmware.gemfire:spring-data-2.7-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion"
 }
