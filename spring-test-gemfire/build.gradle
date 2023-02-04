@@ -21,7 +21,7 @@ dependencies {
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
   api "org.springframework:spring-test:3.0.1"
-  api "com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:1.0.0-build.22"
+  api "com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:1.0.0-build.20"
 
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
@@ -45,8 +45,4 @@ repositories {
               })
     }
   }
-
-  maven { url "https://repo.spring.io/libs-release" }
-  maven { url "https://repo.spring.io/libs-milestone" }
-  maven { url "https://repo.spring.io/libs-snapshot" }
 }
