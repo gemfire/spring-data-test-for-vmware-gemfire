@@ -34,3 +34,19 @@ dependencies {
     exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
   }
 }
+
+repositories {
+  def additionalMavenRepoURLs = project.ext.get('additionalMavenRepoURLs')
+  if (!additionalMavenRepoURLs.isEmpty() && !additionalMavenRepoURLs.isBlank()) {
+    additionalMavenRepoURLs.split(',').each {
+      project.getRepositories()
+              .maven(mavenRepository -> {
+                mavenRepository.setUrl(uri(it.toString()))
+              })
+    }
+  }
+
+  maven { url "https://repo.spring.io/libs-release" }
+  maven { url "https://repo.spring.io/libs-milestone" }
+  maven { url "https://repo.spring.io/libs-snapshot" }
+}
