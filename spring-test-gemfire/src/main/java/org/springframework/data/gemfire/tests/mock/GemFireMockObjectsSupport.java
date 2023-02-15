@@ -1920,7 +1920,6 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 		AtomicBoolean multiuserAuthentication = new AtomicBoolean(PoolFactory.DEFAULT_MULTIUSER_AUTHENTICATION);
 		AtomicBoolean prSingleHopEnabled = new AtomicBoolean(PoolFactory.DEFAULT_PR_SINGLE_HOP_ENABLED);
 		AtomicBoolean subscriptionEnabled = new AtomicBoolean(PoolFactory.DEFAULT_SUBSCRIPTION_ENABLED);
-		AtomicBoolean threadLocalConnections = new AtomicBoolean(PoolFactory.DEFAULT_THREAD_LOCAL_CONNECTIONS);
 
 		AtomicInteger freeConnectionTimeout = new AtomicInteger(PoolFactory.DEFAULT_FREE_CONNECTION_TIMEOUT);
 		AtomicInteger loadConditioningInterval = new AtomicInteger(PoolFactory.DEFAULT_LOAD_CONDITIONING_INTERVAL);
@@ -2015,9 +2014,6 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 		when(mockPoolFactory.setSubscriptionRedundancy(anyInt()))
 			.thenAnswer(newSetter(subscriptionRedundancy, mockPoolFactory));
 
-		when(mockPoolFactory.setThreadLocalConnections(anyBoolean()))
-			.thenAnswer(newSetter(threadLocalConnections, mockPoolFactory));
-
 		when(mockPoolFactory.create(anyString())).thenAnswer(invocation -> {
 
 			String name = invocation.getArgument(0);
@@ -2062,7 +2058,6 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 			when(mockPool.getSubscriptionEnabled()).thenReturn(subscriptionEnabled.get());
 			when(mockPool.getSubscriptionMessageTrackingTimeout()).thenReturn(subscriptionMessageTrackingTimeout.get());
 			when(mockPool.getSubscriptionRedundancy()).thenReturn(subscriptionRedundancy.get());
-			when(mockPool.getThreadLocalConnections()).thenReturn(threadLocalConnections.get());
 
 			doAnswer(getQueryServiceInvocation ->
 				resolveAnyGemFireCache()
@@ -3723,10 +3718,6 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 			return clientCacheFactorySpy;
 		}).when(clientCacheFactorySpy).setPoolSubscriptionRedundancy(anyInt());
 
-		doAnswer(invocation -> {
-			mockPoolFactory.setThreadLocalConnections(invocation.getArgument(0));
-			return clientCacheFactorySpy;
-		}).when(clientCacheFactorySpy).setPoolThreadLocalConnections(anyBoolean());
 
 		Supplier<ClientCache> resolvedMockedClientCache = () ->
 			GemFireMockObjectsSupport.<ClientCache>resolveMockedGemFireCache(useSingletonCache).orElseGet(() -> {
