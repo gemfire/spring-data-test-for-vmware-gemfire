@@ -68,8 +68,7 @@ public class ClientCacheFactorySpyEagerlyInitializesDefaultPoolUnitTests {
 			.setPoolSubscriptionAckInterval(15000)
 			.setPoolSubscriptionEnabled(true)
 			.setPoolSubscriptionMessageTrackingTimeout(300000)
-			.setPoolSubscriptionRedundancy(2)
-			.setPoolThreadLocalConnections(false);
+			.setPoolSubscriptionRedundancy(2);
 
 		assertThat(PoolManager.find("DEFAULT")).isNull();
 
@@ -102,6 +101,5 @@ public class ClientCacheFactorySpyEagerlyInitializesDefaultPoolUnitTests {
 		assertThat(defaultPool.getSubscriptionEnabled()).isEqualTo(true);
 		assertThat(defaultPool.getSubscriptionMessageTrackingTimeout()).isEqualTo(300000);
 		assertThat(defaultPool.getSubscriptionRedundancy()).isEqualTo(2);
-		assertThat(defaultPool.getThreadLocalConnections()).isEqualTo(false);
 	}
 }

@@ -82,7 +82,6 @@ public abstract class PoolMockObjects extends MockObjectsSupport {
 		when(mockPool.getSubscriptionMessageTrackingTimeout()).thenReturn(subscriptionMessageTrackingTimeout);
 		when(mockPool.getSubscriptionRedundancy()).thenReturn(subscriptionRedundancy);
 		//when(mockPool.getSubscriptionTimeoutMultiplier()).thenReturn(subscriptionTimeoutMultiplier);
-		when(mockPool.getThreadLocalConnections()).thenReturn(threadLocalConnections);
 
 		doAnswer(newSetter(destroyed, true)).when(mockPool).destroy();
 		doAnswer(newSetter(destroyed, true)).when(mockPool).destroy(anyBoolean());

@@ -1,8 +1,8 @@
 plugins {
   id 'java-library'
-  id "io.freefair.lombok" version "6.5.1"
+  id "io.freefair.lombok" version "6.6.1"
   id 'dependency-constraints'
-	id 'gemfire-repo-artifact-publishing'
+  id 'gemfire-repo-artifact-publishing'
   id 'com.netflix.nebula.optional-base' version '8.0.0' // if you want optional-base
 }
 
@@ -21,7 +21,21 @@ dependencies {
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
   api "org.springframework:spring-test:5.3.25"
-  compileOnly "com.vmware.gemfire:spring-data-2.7-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion"
+  compileOnly("com.vmware.gemfire:spring-data-2.7-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion") {
+    exclude group: 'com.vmware.gemfire'
+  }
+
+  implementation 'jakarta.annotation:jakarta.annotation-api:1.3.5'
+
+  compileOnly "com.vmware.gemfire:gemfire-core:$gemfireVersion"
+  compileOnly "com.vmware.gemfire:gemfire-logging:$gemfireVersion"
+  compileOnly "com.vmware.gemfire:gemfire-cq:$gemfireVersion"
+  compileOnly "com.vmware.gemfire:gemfire-wan:$gemfireVersion"
+  compileOnly "com.vmware.gemfire:gemfire-gfsh:$gemfireVersion"
+  compileOnly "com.vmware.gemfire:gemfire-lucene:1.0.0-build.172"
+  compileOnly "com.vmware.gemfire:gemfire-tcp-server:$gemfireVersion"
+  compileOnly "com.vmware.gemfire:gemfire-deployment-chained-classloader:$gemfireVersion"
+  compileOnly "com.vmware.gemfire:gemfire-version:$gemfireVersion"
 
   compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
 
@@ -31,5 +45,29 @@ dependencies {
     exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
   }
 
-  testImplementation "com.vmware.gemfire:spring-data-2.7-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion"
+  testImplementation("com.vmware.gemfire:spring-data-2.7-gemfire-10.0:$springDataTanzuGemFireVersion") {
+    exclude group: 'com.vmware.gemfire'
+  }
+  testImplementation "com.vmware.gemfire:gemfire-core:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-logging:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-cq:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-wan:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-gfsh:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-lucene:1.0.0-build.172"
+  testImplementation "com.vmware.gemfire:gemfire-tcp-server:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-deployment-chained-classloader:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-version:$gemfireVersion"
+}
+
+repositories {
+  mavenLocal()
+  def additionalMavenRepoURLs = project.ext.get('additionalMavenRepoURLs')
+  if (!additionalMavenRepoURLs.isEmpty() && !additionalMavenRepoURLs.isBlank()) {
+    additionalMavenRepoURLs.split(',').each {
+      project.getRepositories()
+              .maven(mavenRepository -> {
+                mavenRepository.setUrl(uri(it.toString()));
+              });
+    }
+  }
 }
