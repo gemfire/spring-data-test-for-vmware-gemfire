@@ -1,13 +1,13 @@
 plugins {
   id 'java-library'
-  id "io.freefair.lombok" version "6.5.1"
+  id "io.freefair.lombok" version "6.6.1"
   id 'dependency-constraints'
 	id 'gemfire-repo-artifact-publishing'
   id 'com.netflix.nebula.optional-base' version '8.0.0' // if you want optional-base
 }
 
 
-description = "Spring Test Framework for VMware GemFire"
+description = "Spring Test Framework for VMware GemFire 9.15 and Spring Data 2.7"
 
 project.ext.set("pomProjectLongName", description)
 project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${gemfireBaseVersion}-2.7")
