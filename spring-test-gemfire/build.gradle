@@ -7,7 +7,7 @@ plugins {
 }
 
 
-description = "Spring Test Framework for VMware GemFire"
+description = "Spring Test Framework for VMware GemFire 10.0 and Spring Data 2.7"
 
 project.ext.set("pomProjectLongName", description)
 project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${gemfireBaseVersion}-2.7")
