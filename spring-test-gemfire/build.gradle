@@ -7,7 +7,7 @@ plugins {
 }
 
 
-description = "Spring Test Framework for VMware GemFire"
+description = "Spring Test Framework for VMware GemFire 10.0-beta and Spring Data 3.0"
 
 project.ext.set("pomProjectLongName", description)
 project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${gemfireBaseVersion}-3.0")
@@ -20,8 +20,10 @@ dependencies {
   api "org.assertj:assertj-core"
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
-  api "org.springframework:spring-test:3.0.1"
-  api "com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion"
+  api "org.springframework:spring-test:5.3.25"
+  compileOnly("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion") {
+    exclude group: 'com.vmware.gemfire'
+  }
 
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
@@ -33,6 +35,19 @@ dependencies {
   compileOnly('org.springframework.boot:spring-boot-starter') {
     exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
   }
+
+  testImplementation("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion") {
+    exclude group: 'com.vmware.gemfire'
+  }
+  testImplementation "com.vmware.gemfire:gemfire-core:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-logging:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-cq:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-wan:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-gfsh:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-lucene:1.0.0-build.172"
+  testImplementation "com.vmware.gemfire:gemfire-tcp-server:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-deployment-chained-classloader:$gemfireVersion"
+  testImplementation "com.vmware.gemfire:gemfire-version:$gemfireVersion"
 }
 
 repositories {
