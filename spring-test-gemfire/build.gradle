@@ -21,9 +21,7 @@ dependencies {
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
   api "org.springframework:spring-test:5.3.25"
-  compileOnly("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion") {
-    exclude group: 'com.vmware.gemfire'
-  }
+  compileOnly("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion")
 
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
