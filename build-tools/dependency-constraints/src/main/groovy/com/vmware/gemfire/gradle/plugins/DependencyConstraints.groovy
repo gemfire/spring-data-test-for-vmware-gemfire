@@ -28,7 +28,7 @@ class DependencyConstraints {
     depVersionMapping.put("springFrameworkVersion", "6.0.5")
     depVersionMapping.put("springSecurityVersion", "6.0.1")
     depVersionMapping.put("testcontainersVersion", "1.17.6")
-    depVersionMapping.put("gemfireVersion", "10.0.0-build.1648")
+    depVersionMapping.put("gemfireVersion", "10.0.0-build.1634")
 
     return depVersionMapping
   }
