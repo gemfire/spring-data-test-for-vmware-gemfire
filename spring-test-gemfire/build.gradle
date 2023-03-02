@@ -34,6 +34,12 @@ dependencies {
     exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
   }
 
+  compileOnly "com.vmware.gemfire:gemfire-server-all:$gemfireVersion"
+
+  testImplementation ("com.vmware.gemfire:gemfire-server-all:$gemfireVersion"){
+    exclude group: 'com.vmware.gemfire', module: 'gemfire-log4j'
+  }
+
   testImplementation("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion") {
     exclude group: 'com.vmware.gemfire'
   }
