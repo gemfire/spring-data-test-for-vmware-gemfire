@@ -1,6 +1,6 @@
 plugins {
   id 'java-library'
-  id "io.freefair.lombok" version "6.5.1"
+  id "io.freefair.lombok" version "8.0.1"
   id 'dependency-constraints'
 	id 'gemfire-repo-artifact-publishing'
   id 'com.netflix.nebula.optional-base' version '8.0.0' // if you want optional-base
@@ -20,8 +20,8 @@ dependencies {
   api "org.assertj:assertj-core"
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
-  api "org.springframework:spring-test:6.0.5"
-  compileOnly "com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:1.0.0-build.20"
+  api "org.springframework:spring-test:6.0.7"
+  compileOnly "com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataGemFireVersion"
 
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
@@ -34,7 +34,7 @@ dependencies {
     exclude group: "org.springframework.boot", module: "spring-boot-starter-logging";
   }
 
-  testImplementation "com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:1.0.0-build.20"
+  testImplementation "com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataGemFireVersion"
 }
 
 repositories {
