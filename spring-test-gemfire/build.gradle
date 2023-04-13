@@ -1,6 +1,6 @@
 plugins {
   id 'java-library'
-  id "io.freefair.lombok" version "6.6.1"
+  id "io.freefair.lombok" version "8.0.1"
   id 'dependency-constraints'
 	id 'gemfire-repo-artifact-publishing'
   id 'com.netflix.nebula.optional-base' version '8.0.0' // if you want optional-base
@@ -20,8 +20,8 @@ dependencies {
   api "org.assertj:assertj-core"
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
-  api "org.springframework:spring-test:5.3.25"
-  compileOnly("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion")
+  api "org.springframework:spring-test:6.0.7"
+  compileOnly("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataGemFireVersion")
 
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
@@ -40,7 +40,7 @@ dependencies {
     exclude group: 'com.vmware.gemfire', module: 'gemfire-log4j'
   }
 
-  testImplementation("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataTanzuGemFireVersion") {
+  testImplementation("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataGemFireVersion") {
     exclude group: 'com.vmware.gemfire'
   }
   testImplementation "com.vmware.gemfire:gemfire-core:$gemfireVersion"
@@ -48,7 +48,7 @@ dependencies {
   testImplementation "com.vmware.gemfire:gemfire-cq:$gemfireVersion"
   testImplementation "com.vmware.gemfire:gemfire-wan:$gemfireVersion"
   testImplementation "com.vmware.gemfire:gemfire-gfsh:$gemfireVersion"
-  testImplementation "com.vmware.gemfire:gemfire-lucene:1.0.0-build.172"
+//  testImplementation "com.vmware.gemfire:gemfire-lucene:1.0.0-build.172"
   testImplementation "com.vmware.gemfire:gemfire-tcp-server:$gemfireVersion"
   testImplementation "com.vmware.gemfire:gemfire-deployment-chained-classloader:$gemfireVersion"
   testImplementation "com.vmware.gemfire:gemfire-version:$gemfireVersion"

@@ -23,12 +23,11 @@ class DependencyConstraints {
     depVersionMapping.put("antlrVersion", "2.7.7")
     depVersionMapping.put("findbugsVersion", "3.0.2")
     depVersionMapping.put("multithreadedtcVersion", "1.01")
-    depVersionMapping.put("springBootVersion", "3.0.2")
+    depVersionMapping.put("springBootVersion", "3.0.5")
     depVersionMapping.put("springShellVersion", "1.2.0.RELEASE")
-    depVersionMapping.put("springFrameworkVersion", "6.0.5")
-    depVersionMapping.put("springSecurityVersion", "6.0.1")
+    depVersionMapping.put("springFrameworkVersion", "6.0.7")
+    depVersionMapping.put("springSecurityVersion", "6.0.2")
     depVersionMapping.put("testcontainersVersion", "1.17.6")
-    depVersionMapping.put("gemfireVersion", "10.0.0-build.1634")
 
     return depVersionMapping
   }
@@ -47,7 +46,6 @@ class DependencyConstraints {
         api(group: 'antlr', name: 'antlr', version: get('antlrVersion'))
         api(group: 'com.google.code.findbugs', name: 'jsr305', version: get('findbugsVersion'))
         api(group: 'edu.umd.cs.mtc', name: 'multithreadedtc', version: get('multithreadedtcVersion'))
-        api(group: 'org.springframework.data', name: 'spring-data-geode-test', version: get('springDataGeodeTestVersion'))
         api(group: 'org.springframework.shell', name: 'spring-shell', version: get('springShellVersion'))
         api(group: 'org.springframework.boot', name: 'spring-boot-configuration-processor', version: get('springBootVersion'))
         api(group: 'org.springframework.boot', name: 'spring-boot-autoconfigure-processor', version: get('springBootVersion'))
