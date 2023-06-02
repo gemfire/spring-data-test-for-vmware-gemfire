@@ -111,8 +111,9 @@ public abstract class ProcessUtils {
 
 	protected static File findPidFile(File workingDirectory) {
 
-		Assert.isTrue(FileSystemUtils.isDirectory(workingDirectory),
-			String.format("File [%s] is not a valid directory", workingDirectory));
+        if (!FileSystemUtils.isDirectory(workingDirectory)) {
+            return null;
+        }
 
 		for (File file : workingDirectory.listFiles(DirectoryPidFileFilter.INSTANCE)) {
 			if (file.isDirectory()) {
