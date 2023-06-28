@@ -13,6 +13,15 @@ project.ext.set("pomProjectLongName", description)
 project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${gemfireBaseVersion}-2.7")
 project.ext.set("pomProjectDescription", description)
 
+java {
+  withJavadocJar()
+  withSourcesJar()
+}
+
+javadoc{
+  failOnError=false
+}
+
 dependencies {
 
   api "edu.umd.cs.mtc:multithreadedtc:1.01"
@@ -20,7 +29,7 @@ dependencies {
   api "org.assertj:assertj-core"
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
-  api "org.springframework:spring-test:5.3.25"
+  api "org.springframework:spring-test:5.3.28"
   compileOnly "com.vmware.gemfire:spring-data-2.7-gemfire-$gemfireBaseVersion:$springDataGemFireVersion"
 
   compileOnly "com.vmware.gemfire:geode-core:$gemfireVersion"
