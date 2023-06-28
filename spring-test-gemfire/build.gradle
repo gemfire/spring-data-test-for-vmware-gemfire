@@ -57,7 +57,7 @@ dependencies {
   testImplementation "com.vmware.gemfire:gemfire-cq:$gemfireVersion"
   testImplementation "com.vmware.gemfire:gemfire-wan:$gemfireVersion"
   testImplementation "com.vmware.gemfire:gemfire-gfsh:$gemfireVersion"
-  testImplementation "com.vmware.gemfire:gemfire-lucene:1.0.0-beta.1"
+  testImplementation "com.vmware.gemfire:gemfire-search:1.0.0"
   testImplementation "com.vmware.gemfire:gemfire-tcp-server:$gemfireVersion"
   testImplementation "com.vmware.gemfire:gemfire-deployment-chained-classloader:$gemfireVersion"
   testImplementation "com.vmware.gemfire:gemfire-version:$gemfireVersion"
