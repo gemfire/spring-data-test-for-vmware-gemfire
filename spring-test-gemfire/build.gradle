@@ -6,6 +6,15 @@ plugins {
   id 'com.netflix.nebula.optional-base' version '8.0.0' // if you want optional-base
 }
 
+java {
+  withJavadocJar()
+  withSourcesJar()
+}
+
+javadoc{
+  failOnError=false
+}
+
 
 description = "Spring Test Framework for VMware GemFire 10.0 and Spring Data 3.1"
 
@@ -20,13 +29,13 @@ dependencies {
   api "org.assertj:assertj-core"
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
-  api "org.springframework:spring-test:6.0.9"
+  api "org.springframework:spring-test:6.0.10"
   compileOnly("com.vmware.gemfire:spring-data-3.1-gemfire-$gemfireBaseVersion:$springDataGemFireVersion")
 
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
 
-  compileOnly "com.google.code.findbugs:jsr305:$findbugsVersion"
+  compileOnly "com.google.code.findbugs:jsr305"
 
   implementation "ch.qos.logback:logback-classic", optional
 
