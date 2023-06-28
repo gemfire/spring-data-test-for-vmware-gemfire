@@ -23,12 +23,12 @@ class DependencyConstraints {
     depVersionMapping.put("antlrVersion", "2.7.7")
     depVersionMapping.put("findbugsVersion", "3.0.2")
     depVersionMapping.put("multithreadedtcVersion", "1.01")
-    depVersionMapping.put("springBootVersion", "2.7.8")
+    depVersionMapping.put("springBootVersion", "2.7.9")
     depVersionMapping.put("springShellVersion", "1.2.0.RELEASE")
-    depVersionMapping.put("springFrameworkVersion", "5.3.25")
-    depVersionMapping.put("springSecurityVersion", "5.7.6")
+    depVersionMapping.put("springFrameworkVersion", "5.3.28")
+    depVersionMapping.put("springSecurityVersion", "5.7.9")
     depVersionMapping.put("testcontainersVersion", "1.17.6")
-    depVersionMapping.put("gemfireVersion", "10.0.0-build.1634")
+    depVersionMapping.put("gemfireVersion", "10.0.0")
 
     return depVersionMapping
   }
