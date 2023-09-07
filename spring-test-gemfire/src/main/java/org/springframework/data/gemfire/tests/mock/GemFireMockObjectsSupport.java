@@ -1904,6 +1904,8 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 		AtomicInteger loadConditioningInterval = new AtomicInteger(PoolFactory.DEFAULT_LOAD_CONDITIONING_INTERVAL);
 		AtomicInteger maxConnections = new AtomicInteger(PoolFactory.DEFAULT_MAX_CONNECTIONS);
 		AtomicInteger minConnections = new AtomicInteger(PoolFactory.DEFAULT_MIN_CONNECTIONS);
+		AtomicInteger maxConnectionsPerServer = new AtomicInteger(PoolFactory.DEFAULT_MAX_CONNECTIONS_PER_SERVER);
+		AtomicInteger minConnectionsPerServer = new AtomicInteger(PoolFactory.DEFAULT_MIN_CONNECTIONS_PER_SERVER);
 		AtomicInteger readTimeout = new AtomicInteger(PoolFactory.DEFAULT_READ_TIMEOUT);
 		AtomicInteger retryAttempts = new AtomicInteger(PoolFactory.DEFAULT_RETRY_ATTEMPTS);
 		AtomicInteger serverConnectionTimeout = new AtomicInteger(PoolFactory.DEFAULT_SERVER_CONNECTION_TIMEOUT);
@@ -1947,6 +1949,12 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 
 		when(mockPoolFactory.setMinConnections(anyInt()))
 			.thenAnswer(newSetter(minConnections, mockPoolFactory));
+
+		when(mockPoolFactory.setMaxConnectionsPerServer(anyInt()))
+				.thenAnswer(newSetter(maxConnectionsPerServer, mockPoolFactory));
+
+		when(mockPoolFactory.setMinConnectionsPerServer(anyInt()))
+				.thenAnswer(newSetter(minConnectionsPerServer, mockPoolFactory));
 
 		when(mockPoolFactory.setMultiuserAuthentication(anyBoolean()))
 			.thenAnswer(newSetter(multiuserAuthentication, mockPoolFactory));
@@ -2023,6 +2031,8 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 			when(mockPool.getLocators()).thenReturn(locators);
 			when(mockPool.getMaxConnections()).thenReturn(maxConnections.get());
 			when(mockPool.getMinConnections()).thenReturn(minConnections.get());
+			when(mockPool.getMaxConnectionsPerServer()).thenReturn(maxConnectionsPerServer.get());
+			when(mockPool.getMinConnectionsPerServer()).thenReturn(minConnectionsPerServer.get());
 			when(mockPool.getMultiuserAuthentication()).thenReturn(multiuserAuthentication.get());
 			when(mockPool.getName()).thenReturn(name);
 			when(mockPool.getPingInterval()).thenReturn(pingInterval.get());
@@ -3429,6 +3439,16 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 			mockPoolFactory.setMinConnections(invocation.getArgument(0));
 			return clientCacheFactorySpy;
 		}).when(clientCacheFactorySpy).setPoolMinConnections(anyInt());
+
+		doAnswer(invocation -> {
+			mockPoolFactory.setMaxConnectionsPerServer(invocation.getArgument(0));
+			return clientCacheFactorySpy;
+		}).when(clientCacheFactorySpy).setPoolMaxConnectionsPerServer(anyInt());
+
+		doAnswer(invocation -> {
+			mockPoolFactory.setMinConnectionsPerServer(invocation.getArgument(0));
+			return clientCacheFactorySpy;
+		}).when(clientCacheFactorySpy).setPoolMinConnectionsPerServer(anyInt());
 
 		doAnswer(invocation -> {
 			mockPoolFactory.setMultiuserAuthentication(invocation.getArgument(0));
