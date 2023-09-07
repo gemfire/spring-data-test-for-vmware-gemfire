@@ -56,6 +56,8 @@ public class ClientCacheFactorySpyEagerlyInitializesDefaultPoolUnitTests {
 			.setPoolLoadConditioningInterval(60000)
 			.setPoolMaxConnections(250)
 			.setPoolMinConnections(75)
+			.setPoolMaxConnectionsPerServer(25)
+			.setPoolMinConnectionsPerServer(7)
 			.setPoolMultiuserAuthentication(true)
 			.setPoolPingInterval(5000)
 			.setPoolPRSingleHopEnabled(true)
@@ -88,6 +90,8 @@ public class ClientCacheFactorySpyEagerlyInitializesDefaultPoolUnitTests {
 		assertThat(defaultPool.getLoadConditioningInterval()).isEqualTo(60000);
 		assertThat(defaultPool.getMaxConnections()).isEqualTo(250);
 		assertThat(defaultPool.getMinConnections()).isEqualTo(75);
+		assertThat(defaultPool.getMaxConnectionsPerServer()).isEqualTo(25);
+		assertThat(defaultPool.getMinConnectionsPerServer()).isEqualTo(7);
 		assertThat(defaultPool.getMultiuserAuthentication()).isEqualTo(true);
 		assertThat(defaultPool.getPingInterval()).isEqualTo(5000);
 		assertThat(defaultPool.getPRSingleHopEnabled()).isEqualTo(true);
