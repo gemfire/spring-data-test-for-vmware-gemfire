@@ -10,7 +10,7 @@ plugins {
 description = "Spring Test Framework for VMware GemFire 10.0-beta and Spring Data 3.0"
 
 project.ext.set("pomProjectLongName", description)
-project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${gemfireBaseVersion}-3.0")
+project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${getGemFireBaseVersion()}-3.0")
 project.ext.set("pomProjectDescription", description)
 
 java {
@@ -30,7 +30,7 @@ dependencies {
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
   api "org.springframework:spring-test:6.0.7"
-  compileOnly("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataGemFireVersion")
+  compileOnly("com.vmware.gemfire:spring-data-3.0-gemfire-${getGemFireBaseVersion()}:$springDataGemFireVersion")
 
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
@@ -49,7 +49,7 @@ dependencies {
     exclude group: 'com.vmware.gemfire', module: 'gemfire-log4j'
   }
 
-  testImplementation("com.vmware.gemfire:spring-data-3.0-gemfire-$gemfireBaseVersion:$springDataGemFireVersion") {
+  testImplementation("com.vmware.gemfire:spring-data-3.0-gemfire-${getGemFireBaseVersion()}:$springDataGemFireVersion") {
     exclude group: 'com.vmware.gemfire'
   }
   testImplementation "com.vmware.gemfire:gemfire-core:$gemfireVersion"
@@ -73,4 +73,12 @@ repositories {
               })
     }
   }
+}
+
+String getGemFireBaseVersion() {
+  def split = "${gemfireVersion}".split("\\.")
+  if (split.length < 2) {
+    throw new RuntimeException("gemfireVersion is malformed")
+  }
+  return "${split[0]}.${split[1]}"
 }
