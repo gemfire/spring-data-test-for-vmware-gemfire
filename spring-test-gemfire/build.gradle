@@ -16,10 +16,10 @@ javadoc{
 }
 
 
-description = "Spring Test Framework for VMware GemFire 10.0 and Spring Data 3.1"
+description = "Spring Test Framework for VMware GemFire 10.1 and Spring Data 3.2"
 
 project.ext.set("pomProjectLongName", description)
-project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${getGemFireBaseVersion()}-3.1")
+project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${getGemFireBaseVersion()}-3.2")
 project.ext.set("pomProjectDescription", description)
 
 dependencies {
@@ -29,8 +29,8 @@ dependencies {
   api "org.assertj:assertj-core"
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
-  api "org.springframework:spring-test:6.0.10"
-  compileOnly("com.vmware.gemfire:spring-data-3.1-gemfire-${getGemFireBaseVersion()}:$springDataGemFireVersion")
+  api "org.springframework:spring-test:6.1.0-RC1"
+  compileOnly("com.vmware.gemfire:spring-data-3.2-gemfire-${getGemFireBaseVersion()}:$springDataGemFireVersion")
 
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 
@@ -50,7 +50,7 @@ dependencies {
     exclude module: "prometheus-metrics"
   }
 
-  testImplementation("com.vmware.gemfire:spring-data-3.1-gemfire-${getGemFireBaseVersion()}:$springDataGemFireVersion") {
+  testImplementation("com.vmware.gemfire:spring-data-3.2-gemfire-${getGemFireBaseVersion()}:$springDataGemFireVersion") {
     exclude group: 'com.vmware.gemfire'
   }
   testImplementation "com.vmware.gemfire:gemfire-core:$gemfireVersion"
