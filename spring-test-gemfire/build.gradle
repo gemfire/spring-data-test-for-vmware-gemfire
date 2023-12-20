@@ -47,6 +47,7 @@ dependencies {
 
   testImplementation ("com.vmware.gemfire:gemfire-server-all:$gemfireVersion"){
     exclude group: 'com.vmware.gemfire', module: 'gemfire-log4j'
+    exclude group: 'com.vmware.gemfire', module: 'gemfire-http-service'
     exclude module: "prometheus-metrics"
   }
 
