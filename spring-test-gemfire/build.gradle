@@ -29,7 +29,7 @@ dependencies {
   api "org.assertj:assertj-core"
   api "org.mockito:mockito-core"
   api "org.projectlombok:lombok"
-  api "org.springframework:spring-test:6.0.7"
+  api "org.springframework:spring-test:6.0.15"
   compileOnly("com.vmware.gemfire:spring-data-3.0-gemfire-${getGemFireBaseVersion()}:$springDataGemFireVersion")
 
   implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
