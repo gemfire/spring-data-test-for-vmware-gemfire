@@ -16,7 +16,7 @@ javadoc{
 }
 
 
-description = "Spring Test Framework for VMware GemFire 10.1 and Spring Data 3.2"
+description = "Spring Test Framework for VMware GemFire 10.0 and Spring Data 3.2"
 
 project.ext.set("pomProjectLongName", description)
 project.ext.set("pomProjectArtifactName", "spring-test-gemfire-${getGemFireBaseVersion()}-3.2")
