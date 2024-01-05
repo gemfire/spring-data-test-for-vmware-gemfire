@@ -1,8 +1,0 @@
-pluginManagement {
-  includeBuild('build-tools/dependency-constraints')
-  includeBuild('build-tools/publishing')
-}
-
-rootProject.name = 'spring-test-for-vmware-gemfire'
-
-include 'spring-test-gemfire'
