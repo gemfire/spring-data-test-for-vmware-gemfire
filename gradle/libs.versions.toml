@@ -1,0 +1,44 @@
+[versions]
+gemfireSearchVersion = "1.0.0"
+multithreadedTCVersion = "1.01"
+jUnitVersion = "4.13.2"
+assertJVersion = "3.24.2"
+mockitoVersion = "4.11.0"
+lombokVersion = "1.18.30"
+springFrameworkVersion = "5.3.31"
+annotationApiVersion = "2.1.1"
+findBugsVersion = "3.0.2"
+logbackVersion = "1.3.14"
+springBootVersion = "2.7.18"
+lombokPluginVersion = "8.0.1"
+versionCatalogUpdateVersion = "0.8.3"
+versionsVersion = "0.50.0"
+
+[libraries]
+gemfire-core = { module = "com.vmware.gemfire:gemfire-core", version.ref = "gemfireVersion" }
+gemfire-logging = { module = "com.vmware.gemfire:gemfire-logging", version.ref = "gemfireVersion" }
+gemfire-cq = { module = "com.vmware.gemfire:gemfire-cq", version.ref = "gemfireVersion" }
+gemfire-wan = { module = "com.vmware.gemfire:gemfire-wan", version.ref = "gemfireVersion" }
+gemfire-gfsh = { module = "com.vmware.gemfire:gemfire-gfsh", version.ref = "gemfireVersion" }
+gemfire-tcp-server = { module = "com.vmware.gemfire:gemfire-tcp-server", version.ref = "gemfireVersion" }
+gemfire-deployment-chained-classloader = { module = "com.vmware.gemfire:gemfire-deployment-chained-classloader", version.ref = "gemfireVersion" }
+gemfire-version = { module = "com.vmware.gemfire:gemfire-version", version.ref = "gemfireVersion" }
+spring-data-gemfire = { module = "com.vmware.gemfire:spring-data-2.7-gemfire-10.0", version.ref = "springDataGemFireVersion"}
+spring-test = { module = "org.springframework:spring-test", version.ref = "springFrameworkVersion" }
+spring-boot = { module = "org.springframework.boot:spring-boot-starter", version.ref = "springBootVersion" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logbackVersion" }
+annotation-api = { module = "jakarta.annotation:jakarta.annotation-api", version.ref = "annotationApiVersion" }
+multithreadedtc = { module = "edu.umd.cs.mtc:multithreadedtc", version.ref = "multithreadedTCVersion" }
+junit = { module = "junit:junit", version.ref = "jUnitVersion" }
+assertJ = { module = "org.assertj:assertj-core", version.ref = "assertJVersion" }
+mockito = { module = "org.mockito:mockito-core", version.ref = "mockitoVersion" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombokVersion" }
+find-bugs = { module = "com.google.code.findbugs:jsr305", version.ref = "findBugsVersion" }
+
+[bundles]
+gemfire = ["gemfire-core", "gemfire-logging", "gemfire-cq", "gemfire-gfsh", "gemfire-wan", "gemfire-tcp-server", "gemfire-deployment-chained-classloader", "gemfire-version"]
+
+[plugins]
+versions = { id = "com.github.ben-manes.versions", version.ref = "versionsVersion" }
+version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdateVersion" }
+lombok = { id = "io.freefair.lombok", version.ref = "lombokPluginVersion" }
