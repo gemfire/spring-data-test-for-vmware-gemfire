@@ -110,6 +110,9 @@ public abstract class ProcessUtils {
 	}
 
 	protected static File findPidFile(File workingDirectory) {
+		if(!workingDirectory.exists()){
+			return null;
+		}
 
 		for (File file : workingDirectory.listFiles(DirectoryPidFileFilter.INSTANCE)) {
 			if (file.isDirectory()) {
