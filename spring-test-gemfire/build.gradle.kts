@@ -32,18 +32,21 @@ dependencies {
 
   compileOnly(libs.spring.data.gemfire)
 
-  implementation(libs.annotation.api)
+  compileOnly(libs.jakarta.annotation.api)
 
 
   compileOnly(libs.find.bugs)
 
-  implementation(libs.logback)
+  compileOnly(libs.logback)
 
   compileOnly(libs.spring.boot) {
     exclude("org.springframework.boot", "spring-boot-starter-logging")
   }
-
   compileOnly(libs.bundles.gemfire)
+
+  testImplementation(libs.jakarta.annotation.api)
+
+  testImplementation(libs.logback)
 
   testImplementation(libs.bundles.gemfire)
 
