@@ -1,14 +1,14 @@
 plugins {
   id("java-library")
   alias(libs.plugins.lombok)
-	id("gemfire-repo-artifact-publishing")
+  id("gemfire-repo-artifact-publishing")
 }
 
 java {
   withJavadocJar()
   withSourcesJar()
 
-  toolchain{ languageVersion.set(JavaLanguageVersion.of(17))}
+  toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
 }
 
 tasks.named<Javadoc>("javadoc") {
@@ -53,7 +53,7 @@ dependencies {
 }
 
 repositories {
-  val additionalMavenRepoURLs = project.ext.get("additionalMavenRepoURLs") as String
+  val additionalMavenRepoURLs: String by project
   if (additionalMavenRepoURLs.isNotEmpty() && additionalMavenRepoURLs.isNotBlank()) {
     additionalMavenRepoURLs.split(",").forEach {
       project.repositories.maven {
