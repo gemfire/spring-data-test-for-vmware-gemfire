@@ -53,7 +53,7 @@ dependencies {
 }
 
 repositories {
-  val additionalMavenRepoURLs = project.ext.get("additionalMavenRepoURLs") as String
+  val additionalMavenRepoURLs:String by project
   if (additionalMavenRepoURLs.isNotEmpty() && additionalMavenRepoURLs.isNotBlank()) {
     additionalMavenRepoURLs.split(",").forEach {
       project.repositories.maven {
