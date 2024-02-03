@@ -34,7 +34,6 @@ dependencies {
 
   implementation(libs.annotation.api)
 
-
   compileOnly(libs.find.bugs)
 
   implementation(libs.logback)
