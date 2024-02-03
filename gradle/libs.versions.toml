@@ -1,5 +1,4 @@
 [versions]
-gemfireSearchVersion = "1.0.0"
 multithreadedTCVersion = "1.01"
 jUnitVersion = "4.13.2"
 assertJVersion = "3.24.2"
@@ -8,10 +7,10 @@ lombokVersion = "1.18.30"
 springFrameworkVersion = "5.3.31"
 annotationApiVersion = "2.1.1"
 findBugsVersion = "3.0.2"
-logbackVersion = "1.2.12"
+logbackVersion = "1.2.13"
 springBootVersion = "2.7.18"
 lombokPluginVersion = "8.0.1"
-versionCatalogUpdateVersion = "0.8.3"
+versionCatalogUpdateVersion = "0.8.4"
 versionsVersion = "0.50.0"
 
 [libraries]
