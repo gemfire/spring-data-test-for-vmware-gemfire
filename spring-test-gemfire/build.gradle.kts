@@ -16,6 +16,11 @@ java {
   toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
 }
 
+repositories {
+  mavenCentral()
+  maven { url = uri("https://repo.spring.io/milestone") }
+}
+
 tasks.named<Javadoc>("javadoc") {
   title = "Spring Test for VMware GemFire Java API Reference"
   isFailOnError = false
