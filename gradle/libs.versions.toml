@@ -9,7 +9,7 @@ springFrameworkVersion = "6.1.6"
 annotationApiVersion = "2.1.1"
 findBugsVersion = "3.0.2"
 logbackVersion = "1.4.14"
-springBootVersion = "3.2.4"
+springBootVersion = "3.3.0-RC1"
 lombokPluginVersion = "8.6"
 versionCatalogUpdateVersion = "0.8.4"
 versionsVersion = "0.50.0"
@@ -24,7 +24,7 @@ gemfire-tcp-server = { module = "com.vmware.gemfire:gemfire-tcp-server", version
 gemfire-deployment-chained-classloader = { module = "com.vmware.gemfire:gemfire-deployment-chained-classloader", version.ref = "gemfireVersion" }
 gemfire-version = { module = "com.vmware.gemfire:gemfire-version", version.ref = "gemfireVersion" }
 gemfire-search = { module = "com.vmware.gemfire:gemfire-search", version.ref = "gemfireSearchVersion" }
-spring-data-gemfire = { module = "com.vmware.gemfire:spring-data-3.2-gemfire-10.2", version.ref = "springDataGemFireVersion"}
+spring-data-gemfire = { module = "com.vmware.gemfire:spring-data-3.3-gemfire-10.2", version.ref = "springDataGemFireVersion"}
 spring-test = { module = "org.springframework:spring-test", version.ref = "springFrameworkVersion" }
 spring-boot = { module = "org.springframework.boot:spring-boot-starter", version.ref = "springBootVersion" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logbackVersion" }
