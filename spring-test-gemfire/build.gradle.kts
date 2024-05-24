@@ -23,8 +23,8 @@ tasks.named<Javadoc>("javadoc") {
 
 publishingDetails {
   artifactName.set("spring-test-gemfire-${getGemFireBaseVersion()}-2.7")
-  longName.set("Spring Test Framework for VMware GemFire 10.0 and Spring Data 2.7")
-  description.set("Spring Test Framework for VMware GemFire 10.0 and Spring Data 2.7")
+  longName.set("Spring Test Framework for VMware GemFire 10.1 and Spring Data 2.7")
+  description.set("Spring Test Framework for VMware GemFire 10.1 and Spring Data 2.7")
 }
 
 dependencies {
