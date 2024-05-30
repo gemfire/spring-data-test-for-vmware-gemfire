@@ -40,7 +40,7 @@ public abstract class DiskStoreMockObjects extends MockObjectsSupport {
 
 	public static DiskStore mockDiskStore(String name, boolean allowForceCompaction, boolean autoCompact,
 			int compactionThreshold, File[] diskDirectories, int[] diskDirectorySizes, float diskUsageCriticalPercentage,
-			float diskUsageWarningPercentage, long maxOplogSize, int queueSize, long timeInterval, int writeBufferSize) {
+			float diskUsageWarningPercentage, long maxOplogSize, int queueSize, long timeInterval, int writeBufferSize, int segments) {
 
 		DiskStore mockDiskStore = mock(DiskStore.class, withSettings().name(name).lenient());
 
@@ -57,6 +57,7 @@ public abstract class DiskStoreMockObjects extends MockObjectsSupport {
 		when(mockDiskStore.getQueueSize()).thenReturn(queueSize);
 		when(mockDiskStore.getTimeInterval()).thenReturn(timeInterval);
 		when(mockDiskStore.getWriteBufferSize()).thenReturn(writeBufferSize);
+		when(mockDiskStore.getSegments()).thenReturn(segments);
 
 		return mockDiskStore;
 	}
