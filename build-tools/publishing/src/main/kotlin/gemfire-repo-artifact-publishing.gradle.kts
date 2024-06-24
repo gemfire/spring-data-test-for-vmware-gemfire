@@ -4,6 +4,9 @@
  */
 
 import com.vmware.gemfire.publishing.extension.ManifestExtension
+import gradle.kotlin.dsl.accessors._0ac9a36cec4eeb1254edca678008b431.ext
+import gradle.kotlin.dsl.accessors._0ac9a36cec4eeb1254edca678008b431.publishing
+
 import org.gradle.jvm.tasks.Jar
 
 plugins {
