@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.distributed.DistributedSystem;
 
-import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.client.PoolFactoryBean;
 import org.springframework.data.gemfire.util.PropertiesBuilder;
@@ -35,7 +34,6 @@ import org.springframework.data.gemfire.util.PropertiesBuilder;
  * @see org.mockito.Mockito
  * @see org.apache.geode.cache.GemFireCache
  * @see org.apache.geode.distributed.DistributedSystem
- * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.client.PoolFactoryBean
  * @see org.springframework.data.gemfire.tests.mock.beans.factory.config.GemFireMockObjectsBeanPostProcessor
@@ -86,23 +84,6 @@ public class GemFireMockObjectsBeanPostProcessorUnitTests {
 			"applicationProperties")).isEqualTo(applicationProperties);
 
 		assertThat(beanPostProcessor.getGemFireProperties()).isNotSameAs(applicationProperties);
-	}
-
-	@Test
-	public void postProcessBeforeInitializationWithCacheFactoryBean() {
-
-		GemFireMockObjectsBeanPostProcessor beanPostProcessor = GemFireMockObjectsBeanPostProcessor.newInstance(true);
-
-		assertThat(beanPostProcessor).isNotNull();
-		assertThat(beanPostProcessor.isUsingSingletonCache()).isTrue();
-
-		CacheFactoryBean cacheFactoryBean = spy(new CacheFactoryBean());
-
-		assertThat(beanPostProcessor.postProcessBeforeInitialization(cacheFactoryBean, "peerCache"))
-			.isEqualTo(cacheFactoryBean);
-
-		verify(cacheFactoryBean, times(1))
-			.setCacheFactoryInitializer(isA(GemFireMockObjectsBeanPostProcessor.SpyingCacheFactoryInitializer.class));
 	}
 
 	@Test

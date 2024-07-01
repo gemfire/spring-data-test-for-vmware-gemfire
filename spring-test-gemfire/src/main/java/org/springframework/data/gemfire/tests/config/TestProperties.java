@@ -274,7 +274,7 @@ public class TestProperties implements Iterable<String> {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public Iterator<String> iterator() {

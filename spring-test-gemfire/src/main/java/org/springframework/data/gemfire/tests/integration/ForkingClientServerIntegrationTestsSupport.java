@@ -28,7 +28,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
 import org.springframework.data.gemfire.config.annotation.EnablePdx;
 import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
@@ -46,7 +45,6 @@ import org.springframework.lang.Nullable;
  * @author John Blum
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.client.ClientCache
- * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
  * @see org.springframework.data.gemfire.config.annotation.EnablePdx
  * @see org.springframework.data.gemfire.tests.integration.ClientServerIntegrationTestsSupport
@@ -233,19 +231,6 @@ public abstract class ForkingClientServerIntegrationTestsSupport extends ClientS
 	@ClientCacheApplication
 	public static class BaseGemFireClientConfiguration extends ClientServerIntegrationTestsConfiguration {
 
-	}
-
-	@EnablePdx
-	@CacheServerApplication(name = "ForkingClientServerIntegrationTestsSupport")
-	public static class BaseGemFireServerConfiguration extends ClientServerIntegrationTestsConfiguration {
-
-		public static void main(String[] args) {
-
-			AnnotationConfigApplicationContext applicationContext =
-				new AnnotationConfigApplicationContext(BaseGemFireServerConfiguration.class);
-
-			applicationContext.registerShutdownHook();
-		}
 	}
 
 	@Configuration

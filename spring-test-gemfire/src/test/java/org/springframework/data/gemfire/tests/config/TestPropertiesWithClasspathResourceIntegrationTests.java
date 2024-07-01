@@ -29,7 +29,7 @@ public class TestPropertiesWithClasspathResourceIntegrationTests {
 	private static final TestProperties testProperties = new TestProperties() {
 
 		/**
-		 * @inheritDoc
+		 * {@inheritDoc}
 		 */
 		@Override
 		protected @NonNull Resource getTestPropertiesResource() {

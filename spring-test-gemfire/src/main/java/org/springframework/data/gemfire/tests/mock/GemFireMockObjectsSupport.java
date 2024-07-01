@@ -10,7 +10,6 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
@@ -21,7 +20,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 import static org.springframework.data.gemfire.tests.util.IOUtils.doSafeIo;
-import static org.springframework.data.gemfire.tests.util.ObjectUtils.rethrowAsRuntimeException;
 import static org.springframework.data.gemfire.util.ArrayUtils.nullSafeArray;
 import static org.springframework.data.gemfire.util.CollectionUtils.asSet;
 import static org.springframework.data.gemfire.util.CollectionUtils.nullSafeSet;
@@ -53,7 +51,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -145,7 +142,6 @@ import org.apache.geode.pdx.PdxSerializer;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.data.gemfire.GemfireUtils;
-import org.springframework.data.gemfire.IndexType;
 import org.springframework.data.gemfire.RegionShortcutWrapper;
 import org.springframework.data.gemfire.client.ClientRegionShortcutWrapper;
 import org.springframework.data.gemfire.server.SubscriptionEvictionPolicy;
@@ -753,22 +749,6 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 
 			if (regionShortcutWrapper.isLocal()) {
 				doReturn(Scope.LOCAL).when(mockRegionAttributes).getScope();
-			}
-
-			if (regionShortcutWrapper.isPartition()) {
-
-				PartitionAttributes<K, V> mockPartitionAttributes =
-					mock(PartitionAttributes.class, withSettings().lenient());
-
-				if (regionShortcut.isProxy()) {
-					doReturn(0).when(mockPartitionAttributes).getLocalMaxMemory();
-				}
-
-				if (regionShortcutWrapper.isRedundant()) {
-					doReturn(1).when(mockPartitionAttributes).getRedundantCopies();
-				}
-
-				doReturn(mockPartitionAttributes).when(mockRegionAttributes).getPartitionAttributes();
 			}
 
 			if (regionShortcutWrapper.isReplicate()) {
@@ -2172,21 +2152,6 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 
 			});
 
-			when(mockQueryService.createIndex(anyString(), anyString(), anyString()))
-				.thenAnswer(createIndexAnswer(indexes, IndexType.FUNCTIONAL));
-
-			when(mockQueryService.createIndex(anyString(), anyString(), anyString(), anyString()))
-				.thenAnswer(createIndexAnswer(indexes, IndexType.FUNCTIONAL));
-
-			when(mockQueryService.createHashIndex(anyString(), anyString(), anyString()))
-				.thenAnswer(createIndexAnswer(indexes, IndexType.HASH));
-
-			when(mockQueryService.createHashIndex(anyString(), anyString(), anyString(), anyString()))
-				.thenAnswer(createIndexAnswer(indexes, IndexType.HASH));
-
-			when(mockQueryService.createKeyIndex(anyString(), anyString(), anyString()))
-				.thenAnswer(createIndexAnswer(indexes, IndexType.KEY));
-
 			when(mockQueryService.newCq(anyString(), any(CqAttributes.class))).thenAnswer(invocation ->
 				add(cqQueries, mockCqQuery(null, invocation.getArgument(0), invocation.getArgument(1),
 					false)));
@@ -2226,18 +2191,6 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 		indexes.add(index);
 
 		return index;
-	}
-
-	private static Answer<Index> createIndexAnswer(Collection<Index> indexes, IndexType indexType) {
-
-		return invocation -> {
-
-			String indexName = invocation.getArgument(0);
-			String indexedExpression = invocation.getArgument(1);
-			String regionPath = invocation.getArgument(2);
-
-			return add(indexes, mockIndex(indexName, indexedExpression, regionPath, indexType));
-		};
 	}
 
 	private static CqQuery mockCqQuery(String name, String queryString, CqAttributes cqAttributes, boolean durable) {
@@ -2367,33 +2320,6 @@ public abstract class GemFireMockObjectsSupport extends MockObjectsSupport {
 		doNothing().when(mockSelectResults).setElementType(any(ObjectType.class));
 
 		return mockSelectResults;
-	}
-
-	public static Index mockIndex(String name, String expression, String fromClause, IndexType indexType) {
-
-		Index mockIndex = mock(Index.class, name);
-
-		IndexStatistics mockIndexStaticts = mockIndexStatistics(name);
-
-		when(mockIndex.getName()).thenReturn(name);
-		when(mockIndex.getCanonicalizedFromClause()).thenReturn(fromClause);
-		when(mockIndex.getCanonicalizedIndexedExpression()).thenReturn(expression);
-		when(mockIndex.getCanonicalizedProjectionAttributes()).thenReturn(expression);
-		when(mockIndex.getFromClause()).thenReturn(fromClause);
-		when(mockIndex.getIndexedExpression()).thenReturn(expression);
-		when(mockIndex.getProjectionAttributes()).thenReturn(expression);
-		when(mockIndex.getStatistics()).thenReturn(mockIndexStaticts);
-		when(mockIndex.getType()).thenReturn(indexType.getGemfireIndexType());
-
-		doAnswer(invocation -> {
-
-			String regionName = fromClauseToRegionPath(fromClause);
-
-			return regions.get(regionName);
-
-		}).when(mockIndex).getRegion();
-
-		return mockIndex;
 	}
 
 	private static String fromClauseToRegionPath(String fromClause) {
