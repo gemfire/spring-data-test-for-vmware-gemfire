@@ -14,8 +14,8 @@ import org.junit.runner.RunWith;
 import org.apache.geode.cache.GemFireCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
 import org.springframework.data.gemfire.config.annotation.EnableSecurity;
-import org.springframework.data.gemfire.config.annotation.PeerCacheApplication;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
 import org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects;
 import org.springframework.data.gemfire.tests.objects.geode.security.TestSecurityManager;
@@ -29,7 +29,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author John Blum
  * @see org.junit.Test
  * @see org.springframework.data.gemfire.config.annotation.EnableSecurity
- * @see org.springframework.data.gemfire.config.annotation.PeerCacheApplication
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.annotation.EnableGemFireMockObjects
  * @see org.springframework.test.context.ContextConfiguration
@@ -52,7 +51,7 @@ public class GemFireObjectCreationTriggeredByGemFirePropertyConfigurationIntegra
 		assertThat(TestSecurityManager.getInstance()).isInstanceOf(TestSecurityManager.class);
 	}
 
-	@PeerCacheApplication
+	@ClientCacheApplication
 	@EnableGemFireMockObjects
 	@EnableSecurity(securityManagerClassName = "org.springframework.data.gemfire.tests.objects.geode.security.TestSecurityManager")
 	static class TestConfiguration { }

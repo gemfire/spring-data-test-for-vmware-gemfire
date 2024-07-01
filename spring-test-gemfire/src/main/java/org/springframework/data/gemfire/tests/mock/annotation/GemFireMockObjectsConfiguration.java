@@ -81,7 +81,7 @@ public class GemFireMockObjectsConfiguration extends AbstractAnnotationConfigSup
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	protected @NonNull Class<? extends Annotation> getAnnotationType() {
 		return EnableGemFireMockObjects.class;

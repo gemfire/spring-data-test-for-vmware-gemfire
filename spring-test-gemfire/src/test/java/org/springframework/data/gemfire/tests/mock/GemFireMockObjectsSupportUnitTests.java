@@ -25,16 +25,8 @@ import org.apache.geode.cache.RegionService;
 import org.apache.geode.cache.asyncqueue.AsyncEventListener;
 import org.apache.geode.cache.asyncqueue.AsyncEventQueue;
 import org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory;
-import org.apache.geode.cache.lucene.LuceneIndex;
-import org.apache.geode.cache.lucene.LuceneIndexFactory;
-import org.apache.geode.cache.lucene.LuceneSerializer;
-import org.apache.geode.cache.lucene.LuceneService;
 import org.apache.geode.cache.query.Index;
 import org.apache.geode.cache.server.ClientSubscriptionConfig;
-
-import org.apache.lucene.analysis.Analyzer;
-
-import org.springframework.data.gemfire.IndexType;
 
 /**
  * Unit Tests for {@link GemFireMockObjectsSupport}.
@@ -128,31 +120,6 @@ public class GemFireMockObjectsSupportUnitTests {
 		assertThat(mockClientSubscriptionConfig.getCapacity()).isEqualTo(1024);
 		assertThat(mockClientSubscriptionConfig.getDiskStoreName()).isEqualTo("TestDiskStore");
 		assertThat(mockClientSubscriptionConfig.getEvictionPolicy()).isEqualTo("entry");
-	}
-
-	@Test
-	public void mockIndexIsCorrect() {
-
-		RegionService mockRegionService = mock(RegionService.class);
-
-		RegionAttributes<?, ?> mockRegionAttributes = mock(RegionAttributes.class);
-
-		Region<?, ?> mockRegion =
-			GemFireMockObjectsSupport.mockRegion(mockRegionService, "MockIndexRegion", mockRegionAttributes);
-
-		assertThat(mockRegion).isNotNull();
-
-		Index mockIndex = GemFireMockObjectsSupport
-			.mockIndex("MockIndex", "*", "/MockIndexRegion alias", IndexType.FUNCTIONAL);
-
-		assertThat(mockIndex).isNotNull();
-		assertThat(mockIndex.getName()).isEqualTo("MockIndex");
-		assertThat(mockIndex.getRegion()).isNotNull();
-		assertThat(mockIndex.getRegion()).isEqualTo(mockRegion);
-		assertThat(mockIndex.getRegion().getName()).isEqualTo("MockIndexRegion");
-		assertThat(mockIndex.getFromClause()).isEqualTo("/MockIndexRegion alias");
-		assertThat(mockIndex.getIndexedExpression()).isEqualTo("*");
-		assertThat(mockIndex.getType()).isEqualTo(IndexType.FUNCTIONAL.getGemfireIndexType());
 	}
 
 	@Test

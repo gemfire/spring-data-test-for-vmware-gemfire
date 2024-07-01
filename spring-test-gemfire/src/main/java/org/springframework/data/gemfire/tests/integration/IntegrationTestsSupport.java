@@ -448,12 +448,7 @@ public abstract class IntegrationTestsSupport {
 
 		Function<GemFireCache, GemFireCache> cacheClosingFunction = cacheToClose -> {
 
-			if (GemfireUtils.isClient(cacheToClose)) {
-				((ClientCache) cacheToClose).close(false);
-			}
-			else {
-				cacheToClose.close();
-			}
+			((ClientCache) cacheToClose).close(false);
 
 			return cacheToClose;
 		};
@@ -653,7 +648,7 @@ public abstract class IntegrationTestsSupport {
 		private ApplicationEventPublisher applicationEventPublisher;
 
 		/**
-		 * @inheritDoc
+		 * {@inheritDoc}
 		 */
 		@Override
 		public void setApplicationEventPublisher(@Nullable ApplicationEventPublisher applicationEventPublisher) {
@@ -665,7 +660,7 @@ public abstract class IntegrationTestsSupport {
 		}
 
 		/**
-		 * @inheritDoc
+		 * {@inheritDoc}
 		 */
 		@Override
 		public void cacheCreated(InternalCache cache) {
@@ -674,7 +669,7 @@ public abstract class IntegrationTestsSupport {
 		}
 
 		/**
-		 * @inheritDoc
+		 * {@inheritDoc}
 		 */
 		@Override
 		public void cacheClosed(InternalCache cache) {
@@ -720,7 +715,7 @@ public abstract class IntegrationTestsSupport {
 		}
 
 		/**
-		 * @inheritDoc
+		 * {@inheritDoc}
 		 */
 		@Override
 		public void cacheCreated(@NonNull InternalCache cache) {
@@ -732,7 +727,7 @@ public abstract class IntegrationTestsSupport {
 		}
 
 		/**
-		 * @inheritDoc
+		 * {@inheritDoc}
 		 */
 		@Override
 		public void cacheClosed(@NonNull InternalCache cache) {

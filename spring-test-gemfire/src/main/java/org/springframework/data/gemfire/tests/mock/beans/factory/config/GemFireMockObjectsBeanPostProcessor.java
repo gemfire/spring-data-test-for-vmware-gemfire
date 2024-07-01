@@ -17,7 +17,6 @@ import org.apache.geode.distributed.DistributedSystem;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.data.gemfire.CacheFactoryBean;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.client.PoolFactoryBean;
 import org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport;
@@ -37,7 +36,7 @@ import org.springframework.lang.Nullable;
  * @see org.apache.geode.cache.client.PoolFactory
  * @see org.apache.geode.distributed.DistributedSystem
  * @see org.springframework.beans.factory.config.BeanPostProcessor
- * @see org.springframework.data.gemfire.CacheFactoryBean
+ * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.client.PoolFactoryBean
  * @see org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport
@@ -81,20 +80,20 @@ public class GemFireMockObjectsBeanPostProcessor implements BeanPostProcessor {
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public @Nullable Object postProcessBeforeInitialization(@Nullable Object bean, @NonNull String beanName)
 			throws BeansException {
 
 		return isGemFireProperties(bean, beanName) ? set((Properties) bean)
-			: isCacheFactoryBean(bean) ? spyOnCacheFactoryBean((CacheFactoryBean) bean, isUsingSingletonCache())
+			: isCacheFactoryBean(bean) ? spyOnCacheFactoryBean((ClientCacheFactoryBean) bean, isUsingSingletonCache())
 			: isPoolFactoryBean(bean) ? mockPoolFactoryBean((PoolFactoryBean) bean)
 			: bean;
 	}
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public @Nullable Object postProcessAfterInitialization(@Nullable Object bean, @NonNull String beanName)
@@ -120,7 +119,7 @@ public class GemFireMockObjectsBeanPostProcessor implements BeanPostProcessor {
 	}
 
 	private boolean isCacheFactoryBean(@Nullable Object bean) {
-		return bean instanceof CacheFactoryBean;
+		return bean instanceof ClientCacheFactoryBean;
 	}
 
 	private boolean isGemFireProperties(@Nullable Object bean, @Nullable String beanName) {
@@ -146,7 +145,7 @@ public class GemFireMockObjectsBeanPostProcessor implements BeanPostProcessor {
 		return this.gemfireProperties.get();
 	}
 
-	private @NonNull Object spyOnCacheFactoryBean(@NonNull CacheFactoryBean bean, boolean useSingletonCache) {
+	private @NonNull Object spyOnCacheFactoryBean(@NonNull ClientCacheFactoryBean bean, boolean useSingletonCache) {
 
 		return bean instanceof ClientCacheFactoryBean
 			? SpyingClientCacheFactoryInitializer.spyOn((ClientCacheFactoryBean) bean, useSingletonCache)
@@ -158,9 +157,9 @@ public class GemFireMockObjectsBeanPostProcessor implements BeanPostProcessor {
 	}
 
 	protected static class SpyingCacheFactoryInitializer
-			implements CacheFactoryBean.CacheFactoryInitializer<CacheFactory> {
+			implements ClientCacheFactoryBean.CacheFactoryInitializer<ClientCacheFactory> {
 
-		protected static CacheFactoryBean spyOn(CacheFactoryBean cacheFactoryBean, boolean useSingletonCache) {
+		protected static ClientCacheFactoryBean spyOn(ClientCacheFactoryBean cacheFactoryBean, boolean useSingletonCache) {
 
 			cacheFactoryBean.setCacheFactoryInitializer(new SpyingCacheFactoryInitializer(useSingletonCache));
 
@@ -178,13 +177,13 @@ public class GemFireMockObjectsBeanPostProcessor implements BeanPostProcessor {
 		}
 
 		@Override
-		public CacheFactory initialize(CacheFactory cacheFactory) {
+		public ClientCacheFactory initialize(ClientCacheFactory cacheFactory) {
 			return GemFireMockObjectsSupport.spyOn(cacheFactory, isUsingSingletonCache());
 		}
 	}
 
 	protected static class SpyingClientCacheFactoryInitializer
-			implements CacheFactoryBean.CacheFactoryInitializer<ClientCacheFactory> {
+			implements ClientCacheFactoryBean.CacheFactoryInitializer<ClientCacheFactory> {
 
 		protected static ClientCacheFactoryBean spyOn(ClientCacheFactoryBean clientCacheFactoryBean,
 				boolean useSingletonCache) {
