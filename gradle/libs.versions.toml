@@ -24,7 +24,7 @@ gemfire-tcp-server = { module = "com.vmware.gemfire:gemfire-tcp-server", version
 gemfire-deployment-chained-classloader = { module = "com.vmware.gemfire:gemfire-deployment-chained-classloader", version.ref = "gemfireVersion" }
 gemfire-version = { module = "com.vmware.gemfire:gemfire-version", version.ref = "gemfireVersion" }
 gemfire-search = { module = "com.vmware.gemfire:gemfire-search", version.ref = "gemfireSearchVersion" }
-spring-data-gemfire = { module = "com.vmware.gemfire:spring-data-3.2-gemfire-10.2", version.ref = "springDataGemFireVersion"}
+spring-data-gemfire = { module = "com.vmware.gemfire:spring-data-3.3-gemfire-10.2", version.ref = "springDataGemFireVersion"}
 spring-test = { module = "org.springframework:spring-test", version.ref = "springFrameworkVersion" }
 spring-boot = { module = "org.springframework.boot:spring-boot-starter", version.ref = "springBootVersion" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logbackVersion" }
