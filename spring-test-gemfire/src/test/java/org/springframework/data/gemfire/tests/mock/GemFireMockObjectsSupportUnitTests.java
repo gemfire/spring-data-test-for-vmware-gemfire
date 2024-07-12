@@ -11,21 +11,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.After;
 import org.junit.Test;
 
 import org.apache.geode.cache.AttributesMutator;
-import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.RegionAttributes;
 import org.apache.geode.cache.RegionService;
-import org.apache.geode.cache.asyncqueue.AsyncEventListener;
-import org.apache.geode.cache.asyncqueue.AsyncEventQueue;
-import org.apache.geode.cache.asyncqueue.AsyncEventQueueFactory;
-import org.apache.geode.cache.query.Index;
 import org.apache.geode.cache.server.ClientSubscriptionConfig;
 
 /**
@@ -35,7 +27,6 @@ import org.apache.geode.cache.server.ClientSubscriptionConfig;
  * @see org.junit.Test
  * @see org.mockito.Mockito
  * @see org.apache.geode.cache.AttributesMutator
- * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.Region
  * @see org.apache.geode.cache.RegionAttributes
  * @see org.apache.geode.cache.RegionService
@@ -51,58 +42,6 @@ public class GemFireMockObjectsSupportUnitTests {
 	@After
 	public void tearDown() {
 		GemFireMockObjectsSupport.destroy();
-	}
-
-	@Test
-	public void mockAsyncEventQueueEventDispatchingIsNotPausedByDefault() {
-
-		Cache mockCache = GemFireMockObjectsSupport.mockPeerCache();
-
-		assertThat(mockCache).isNotNull();
-
-		AsyncEventQueueFactory asyncEventQueueFactory = mockCache.createAsyncEventQueueFactory();
-
-		assertThat(asyncEventQueueFactory).isNotNull();
-
-		AsyncEventListener mockAsyncEventListener = mock(AsyncEventListener.class);
-
-		AsyncEventQueue asyncEventQueue =
-			asyncEventQueueFactory.create("mockAsyncEventQueueEventDispatchingIsAutoByDefault",
-				mockAsyncEventListener);
-
-		assertThat(asyncEventQueue).isNotNull();
-		assertThat(asyncEventQueue.isDispatchingPaused()).isFalse();
-
-		asyncEventQueue.resumeEventDispatching();
-
-		assertThat(asyncEventQueue.isDispatchingPaused()).isFalse();
-	}
-
-	@Test
-	public void mockAsyncEventQueuePauseAndResumeEventDispatchingIsCorrect() {
-
-		Cache mockCache = GemFireMockObjectsSupport.mockPeerCache();
-
-		assertThat(mockCache).isNotNull();
-
-		AsyncEventQueueFactory asyncEventQueueFactory = mockCache.createAsyncEventQueueFactory();
-
-		assertThat(asyncEventQueueFactory).isNotNull();
-
-		asyncEventQueueFactory.pauseEventDispatching();
-
-		AsyncEventListener mockAsyncEventListener = mock(AsyncEventListener.class);
-
-		AsyncEventQueue asyncEventQueue =
-			asyncEventQueueFactory.create("mockAsyncEventQueuePauseAndResumeEventDispatchingIsCorrect",
-				mockAsyncEventListener);
-
-		assertThat(asyncEventQueue).isNotNull();
-		assertThat(asyncEventQueue.isDispatchingPaused()).isTrue();
-
-		asyncEventQueue.resumeEventDispatching();
-
-		assertThat(asyncEventQueue.isDispatchingPaused()).isFalse();
 	}
 
 	@Test

@@ -9,11 +9,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.geode.cache.client.ClientCache;
+import org.apache.geode.cache.client.ClientCacheFactory;
 import org.junit.After;
 import org.junit.Test;
-
-import org.apache.geode.cache.Cache;
-import org.apache.geode.cache.CacheFactory;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport;
@@ -25,8 +24,7 @@ import org.springframework.data.gemfire.tests.support.AbstractSecurityManager;
  * @author John Blum
  * @see java.util.Properties
  * @see org.junit.Test
- * @see org.apache.geode.cache.Cache
- * @see org.apache.geode.cache.CacheFactory
+ * @see org.apache.geode.cache.client.ClientCacheFactory
  * @see org.springframework.data.gemfire.tests.integration.IntegrationTestsSupport
  * @see org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport
  * @see org.springframework.data.gemfire.tests.support.AbstractSecurityManager
@@ -55,7 +53,7 @@ public class GemFireMockObjectsSupportIntegrationTests extends IntegrationTestsS
 
 		assertThat(TestSecurityManager.constructed.get()).isFalse();
 
-		GemFireMockObjectsSupport.spyOn(new CacheFactory(gemfireProperties)).create();
+		GemFireMockObjectsSupport.spyOn(new ClientCacheFactory(gemfireProperties)).create();
 
 		assertThat(TestSecurityManager.constructed.get()).isTrue();
 	}
@@ -73,7 +71,7 @@ public class GemFireMockObjectsSupportIntegrationTests extends IntegrationTestsS
 		assertThat(TestSecurityManager.destroyed.get()).isFalse();
 		assertThat(TestSecurityPostProcessor.constructed.get()).isFalse();
 
-		GemFireMockObjectsSupport.spyOn(new CacheFactory(gemfireProperties)).create();
+		GemFireMockObjectsSupport.spyOn(new ClientCacheFactory(gemfireProperties)).create();
 
 		assertThat(TestSecurityManager.constructed.get()).isTrue();
 		assertThat(TestSecurityManager.destroyed.get()).isFalse();
@@ -100,13 +98,13 @@ public class GemFireMockObjectsSupportIntegrationTests extends IntegrationTestsS
 			gemfireProperties.setProperty("jmx-manager-port", "1199");
 			gemfireProperties.setProperty("groups", "test,mock");
 
-			CacheFactory mockCacheFactory =
-				GemFireMockObjectsSupport.spyOn(new CacheFactory(gemfireProperties));
+			ClientCacheFactory mockCacheFactory =
+				GemFireMockObjectsSupport.spyOn(new ClientCacheFactory(gemfireProperties));
 
 			mockCacheFactory.set("groups", "qa,test,testers");
 			mockCacheFactory.set("conserve-sockets", "true");
 
-			Cache mockCache = mockCacheFactory.create();
+			ClientCache mockCache = mockCacheFactory.create();
 
 			assertThat(mockCache).isNotNull();
 			assertThat(mockCache.getDistributedSystem()).isNotNull();

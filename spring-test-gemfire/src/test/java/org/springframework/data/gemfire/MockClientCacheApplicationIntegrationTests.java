@@ -13,7 +13,7 @@ import jakarta.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.Region;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientRegionShortcut;
@@ -33,7 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  * @author John Blum
  * @see org.junit.Test
- * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.client.ClientCache
  * @see org.apache.geode.cahce.Region
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
@@ -93,7 +93,7 @@ public class MockClientCacheApplicationIntegrationTests {
   static class TestConfiguration {
 
     @Bean("Example")
-    public ClientRegionFactoryBean<Object, Object> exampleRegion(GemFireCache gemfireCache) {
+    public ClientRegionFactoryBean<Object, Object> exampleRegion(ClientCache gemfireCache) {
 
       ClientRegionFactoryBean<Object, Object> exampleRegion = new ClientRegionFactoryBean<>();
 

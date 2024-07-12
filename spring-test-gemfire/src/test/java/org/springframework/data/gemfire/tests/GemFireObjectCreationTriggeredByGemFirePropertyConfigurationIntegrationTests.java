@@ -11,7 +11,7 @@ import java.util.Properties;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.client.ClientCache;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
@@ -42,7 +42,7 @@ public class GemFireObjectCreationTriggeredByGemFirePropertyConfigurationIntegra
 		extends IntegrationTestsSupport {
 
 	@Autowired
-	private GemFireCache gemfireCache;
+	private ClientCache gemfireCache;
 
 	@Test
 	public void securityManagerIsPresent() {

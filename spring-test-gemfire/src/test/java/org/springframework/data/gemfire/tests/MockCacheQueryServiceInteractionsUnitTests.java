@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.query.Query;
 import org.apache.geode.cache.query.QueryService;
@@ -21,11 +21,11 @@ import org.apache.geode.cache.query.types.ObjectType;
 import org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport;
 
 /**
- * Unit Tests for GemFire/Geode {@literal Mock} {@link GemFireCache} {@link QueryService} and {@link Query OQL Queries}.
+ * Unit Tests for GemFire/Geode {@literal Mock} {@link ClientCache} {@link QueryService} and {@link Query OQL Queries}.
  *
  * @author John Blum
  * @see org.junit.Test
- * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.client.ClientCache
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.apache.geode.cache.query.QueryService
  * @see org.apache.geode.cache.query.Query

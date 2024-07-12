@@ -11,23 +11,20 @@ import java.util.Properties;
 import org.junit.After;
 import org.junit.Test;
 
-import org.apache.geode.cache.Cache;
-import org.apache.geode.cache.CacheFactory;
-import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.client.ClientCacheFactory;
+import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.distributed.internal.DistributionConfig;
 import org.apache.geode.internal.cache.GemFireCacheImpl;
 
 import org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport;
 
 /**
- * Unit Tests for spying on {@link CacheFactory} and {@link ClientCacheFactory} objects as well as asserting
+ * Unit Tests for spying on {@link ClientCacheFactory} and {@link ClientCacheFactory} objects as well as asserting
  * the configuration of the mock cache instance created by the factories.
  *
  * @author John Blum
  * @see org.junit.Test
- * @see org.apache.geode.cache.Cache
- * @see org.apache.geode.cache.CacheFactory
+ * @see org.apache.geode.cache.client.ClientCacheFactory
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.apache.geode.cache.client.ClientCacheFactory
  * @see org.apache.geode.distributed.internal.DistributionConfig
@@ -48,11 +45,11 @@ public class CacheAndClientCacheFactorySpiesConfiguresMockCacheNameUnitTests {
 
 		gemfireProperties.setProperty(DistributionConfig.NAME_NAME, "MockCacheName");
 
-		CacheFactory cacheFactory = GemFireMockObjectsSupport.spyOn(new CacheFactory(gemfireProperties));
+		ClientCacheFactory cacheFactory = GemFireMockObjectsSupport.spyOn(new ClientCacheFactory(gemfireProperties));
 
 		assertThat(cacheFactory).isNotNull();
 
-		Cache mockCache = cacheFactory.create();
+		ClientCache mockCache = cacheFactory.create();
 
 		assertThat(mockCache).isNotNull();
 		assertThat(mockCache).isNotInstanceOf(GemFireCacheImpl.class);

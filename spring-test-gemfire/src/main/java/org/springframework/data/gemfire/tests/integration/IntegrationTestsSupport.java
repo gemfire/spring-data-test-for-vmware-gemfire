@@ -6,7 +6,6 @@ package org.springframework.data.gemfire.tests.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.data.gemfire.util.RuntimeExceptionFactory.newIllegalStateException;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -19,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -26,14 +26,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
+import java.util.stream.Collectors;
 import org.apache.geode.DataSerializer;
 import org.apache.geode.cache.CacheClosedException;
-import org.apache.geode.cache.GemFireCache;
 import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.cache.execute.FunctionService;
 import org.apache.geode.distributed.Locator;
@@ -43,7 +38,9 @@ import org.apache.geode.internal.cache.GemFireCacheImpl;
 import org.apache.geode.internal.cache.InternalCache;
 import org.apache.geode.internal.net.SSLConfigurationFactory;
 import org.apache.geode.internal.net.SocketCreatorFactory;
-
+import org.apache.shiro.util.StringUtils;
+import org.junit.AfterClass;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
@@ -56,7 +53,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.data.gemfire.GemfireUtils;
 import org.springframework.data.gemfire.support.GemfireBeanFactoryLocator;
-import org.springframework.data.gemfire.tests.config.TestProperties;
 import org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport;
 import org.springframework.data.gemfire.tests.util.FileSystemUtils;
 import org.springframework.data.gemfire.tests.util.FileUtils;
@@ -66,31 +62,30 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 /**
- * The {@link IntegrationTestsSupport} class is an abstract base class supporting integration tests
- * with either Apache Geode or VMware GemFire in a Spring context.
+ * Abstract base class supporting integration tests with either Apache Geode or VMware Tanzu GemFire
+ * in a Spring context.
  *
  * @author John Blum
- * @see java.io.File
- * @see java.time.LocalDateTime
- * @see java.util.concurrent.TimeUnit
- * @see java.util.function.Function
- * @see java.util.function.Predicate
- * @see org.apache.geode.DataSerializer
- * @see org.apache.geode.cache.GemFireCache
- * @see org.apache.geode.distributed.Locator
- * @see org.springframework.context.ApplicationContext
- * @see org.springframework.context.ApplicationEvent
- * @see org.springframework.context.ApplicationEventPublisher
- * @see org.springframework.context.ApplicationEventPublisherAware
- * @see org.springframework.context.ConfigurableApplicationContext
- * @see org.springframework.core.env.ConfigurableEnvironment
- * @see org.springframework.core.env.PropertySource
- * @see org.springframework.core.env.StandardEnvironment
- * @see org.springframework.data.gemfire.support.GemfireBeanFactoryLocator
- * @see org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport
+ * @see File
+ * @see DataSerializer
+ * @see ClientCache
+ * @see FunctionService
+ * @see Locator
+ * @see CacheLifecycleListener
+ * @see GemFireCacheImpl
+ * @see ApplicationContext
+ * @see ApplicationEvent
+ * @see ApplicationEventPublisher
+ * @see ApplicationEventPublisherAware
+ * @see ConfigurableApplicationContext
+ * @see ConfigurableEnvironment
+ * @see Environment
+ * @see PropertySource
+ * @see StandardEnvironment
+ * @see GemfireBeanFactoryLocator
+ * @see GemFireMockObjectsSupport
  * @since 1.0.0
  */
 @SuppressWarnings("unused")
@@ -103,7 +98,7 @@ public abstract class IntegrationTestsSupport {
 	protected static final long DEFAULT_WAIT_DURATION = TimeUnit.SECONDS.toMillis(30);
 	protected static final long DEFAULT_WAIT_INTERVAL = 500L; // milliseconds
 
-	protected static final String DATE_TIME_PATTERN = "yyyy-MM-dd-hh-mm-ss";
+	protected static final String DATE_TIME_PATTERN = "yyyy-MM-dd-HH-mm-ss";
 	protected static final String DIRECTORY_DELETE_ON_EXIT_PROPERTY = "spring.data.gemfire.test.directory.delete-on-exit";
 	protected static final String DIRECTORY_NAME_FORMAT = "%1$s-%2$s";
 	protected static final String GEMFIRE_LOG_FILE = "gemfire-server.log";
@@ -115,36 +110,36 @@ public abstract class IntegrationTestsSupport {
 	protected static final String TEST_GEMFIRE_LOG_LEVEL = "error";
 
 	private static final AtomicReference<ConfigurableApplicationContext> applicationContextReference =
-		new AtomicReference<>(null);
+			new AtomicReference<>(null);
 
 	private static final Predicate<String> JAVAX_NET_SSL_NAME_PREDICATE =
-		propertyName -> String.valueOf(propertyName).toLowerCase().startsWith("javax.net.ssl");
+			propertyName -> String.valueOf(propertyName).toLowerCase().startsWith("javax.net.ssl");
 
 	private static final Predicate<String> GEMFIRE_DOT_SYSTEM_PROPERTY_NAME_PREDICATE =
-		propertyName -> String.valueOf(propertyName).toLowerCase().startsWith("gemfire");
+			propertyName -> String.valueOf(propertyName).toLowerCase().startsWith("gemfire");
 
 	private static final Predicate<String> GEODE_DOT_SYSTEM_PROPERTY_NAME_PREDICATE =
-		propertyName -> String.valueOf(propertyName).toLowerCase().startsWith("geode");
+			propertyName -> String.valueOf(propertyName).toLowerCase().startsWith("geode");
 
 	private static final Predicate<String> SPRING_DOT_SYSTEM_PROPERTY_NAME_PREDICATE =
-		propertyName -> String.valueOf(propertyName).toLowerCase().startsWith("spring");
+			propertyName -> String.valueOf(propertyName).toLowerCase().startsWith("spring");
 
 	private static final Predicate<String> ALL_SYSTEM_PROPERTIES_NAME_PREDICATE = JAVAX_NET_SSL_NAME_PREDICATE
-		.or(GEMFIRE_DOT_SYSTEM_PROPERTY_NAME_PREDICATE)
-		.or(GEODE_DOT_SYSTEM_PROPERTY_NAME_PREDICATE)
-		.or(SPRING_DOT_SYSTEM_PROPERTY_NAME_PREDICATE);
+			.or(GEMFIRE_DOT_SYSTEM_PROPERTY_NAME_PREDICATE)
+			.or(GEODE_DOT_SYSTEM_PROPERTY_NAME_PREDICATE)
+			.or(SPRING_DOT_SYSTEM_PROPERTY_NAME_PREDICATE);
 
 	private static final Predicate<String> SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME =
-		StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME::equals;
+			StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME::equals;
 
 	private static final Predicate<String> SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME =
-		StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME::equals;
+			StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME::equals;
 
 	private static final Predicate<String> RETAINED_PROPERTY_SOURCE_NAMES = SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME
-		.or(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME);
+			.or(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME);
 
 	private static final TestContextCacheLifecycleListenerAdapter cacheLifecycleListener =
-		TestContextCacheLifecycleListenerAdapter.getInstance();
+			TestContextCacheLifecycleListenerAdapter.getInstance();
 
 	@Autowired(required = false)
 	private ConfigurableApplicationContext applicationContext;
@@ -155,7 +150,7 @@ public abstract class IntegrationTestsSupport {
 	 * @param <T> specific {@link Class type} of {@link ConfigurableApplicationContext}.
 	 * @param applicationContext reference to the current, configured Spring {@link ConfigurableApplicationContext}.
 	 * @return the given reference to the Spring {@link ConfigurableApplicationContext}.
-	 * @see org.springframework.context.ConfigurableApplicationContext
+	 * @see ConfigurableApplicationContext
 	 * @see #getOptionalApplicationContext()
 	 * @see #getApplicationContext()
 	 */
@@ -172,7 +167,7 @@ public abstract class IntegrationTestsSupport {
 	 *
 	 * @param <T> specific {@link Class type} of {@link ConfigurableApplicationContext}.
 	 * @return a reference to the configured Spring {@link ConfigurableApplicationContext}; maybe {@literal null}.
-	 * @see org.springframework.context.ConfigurableApplicationContext
+	 * @see ConfigurableApplicationContext
 	 * @see #setApplicationContext(ConfigurableApplicationContext)
 	 * @see #getOptionalApplicationContext()
 	 */
@@ -186,10 +181,10 @@ public abstract class IntegrationTestsSupport {
 	 *
 	 * @param <T> specific {@link Class type} of {@link ConfigurableApplicationContext}.
 	 * @return an {@link Optional} reference to the configured Spring {@link ConfigurableApplicationContext}.
-	 * @see org.springframework.context.ConfigurableApplicationContext
+	 * @see ConfigurableApplicationContext
 	 * @see #setApplicationContext(ConfigurableApplicationContext)
 	 * @see #getApplicationContext()
-	 * @see java.util.Optional
+	 * @see Optional
 	 */
 	protected <T extends ConfigurableApplicationContext> Optional<T> getOptionalApplicationContext() {
 		return Optional.ofNullable(getApplicationContext());
@@ -201,28 +196,28 @@ public abstract class IntegrationTestsSupport {
 	 * @param <T> specific {@link Class type} of {@link ConfigurableApplicationContext}.
 	 * @return an {@literal non-null} reference to the configured Spring {@link ConfigurableApplicationContext}.
 	 * @throws IllegalStateException if the Spring {@link ConfigurableApplicationContext} was not initialized.
-	 * @see org.springframework.context.ConfigurableApplicationContext
+	 * @see ConfigurableApplicationContext
 	 * @see #setApplicationContext(ConfigurableApplicationContext)
 	 * @see #getOptionalApplicationContext()
 	 * @see #getApplicationContext()
 	 */
 	protected <T extends ConfigurableApplicationContext> T requireApplicationContext() {
 		return this.<T>getOptionalApplicationContext()
-			.orElseThrow(() -> newIllegalStateException("An ApplicationContext was not initialized"));
+				.orElseThrow(() -> newIllegalStateException("An ApplicationContext was not initialized"));
 	}
 
 	/**
 	 * Clears all Java, VMware Tanzu GemFire, Apache Geode and Spring {@link System#getProperties() System Properties}
 	 * after test (class/suite) execution.
 	 *
-	 * @see java.lang.System#getProperties()
+	 * @see System#getProperties()
 	 */
 	@AfterClass
 	public static void clearAllJavaGemFireGeodeAndSpringDotPrefixedSystemProperties() {
 
 		List<String> allSystemPropertyNames = System.getProperties().stringPropertyNames().stream()
-			.filter(ALL_SYSTEM_PROPERTIES_NAME_PREDICATE)
-			.toList();
+				.filter(ALL_SYSTEM_PROPERTIES_NAME_PREDICATE)
+				.collect(Collectors.toList());
 
 		allSystemPropertyNames.forEach(System::clearProperty);
 	}
@@ -233,38 +228,28 @@ public abstract class IntegrationTestsSupport {
 	 *
 	 * Only {@link System#getProperties() System Properties} and {@literal Environment Variables} are standard.
 	 *
-	 * @see org.springframework.core.env.Environment
+	 * @see Environment
 	 */
 	@AfterClass
 	public static void clearNonStandardSpringEnvironmentPropertySources() {
 
 		Optional.ofNullable(applicationContextReference.get())
-			.map(ConfigurableApplicationContext::getEnvironment)
-			.map(ConfigurableEnvironment::getPropertySources)
-			.ifPresent(propertySources -> {
-				for (PropertySource<?> propertySource : propertySources) {
-					if (Objects.nonNull(propertySource)) {
+				.map(ConfigurableApplicationContext::getEnvironment)
+				.map(ConfigurableEnvironment::getPropertySources)
+				.ifPresent(propertySources -> {
+					for (PropertySource<?> propertySource : propertySources) {
+						if (Objects.nonNull(propertySource)) {
 
-						String propertySourceName = propertySource.getName();
+							String propertySourceName = propertySource.getName();
 
-						if (StringUtils.hasText(propertySourceName)) {
-							if (!RETAINED_PROPERTY_SOURCE_NAMES.test(propertySource.getName())) {
-								propertySources.remove(propertySourceName);
+							if (StringUtils.hasText(propertySourceName)) {
+								if (!RETAINED_PROPERTY_SOURCE_NAMES.test(propertySource.getName())) {
+									propertySources.remove(propertySourceName);
+								}
 							}
 						}
 					}
-				}
-			});
-	}
-
-	/**
-	 * Clears all test {@link System#getProperties()} after a test class (suite) execution.
-	 *
-	 * @see org.springframework.data.gemfire.tests.config.TestProperties
-	 */
-	@AfterClass
-	public static void clearTestSystemProperties() {
-		TestProperties.getInstance().clearSystemProperties();
+				});
 	}
 
 	/**
@@ -276,9 +261,9 @@ public abstract class IntegrationTestsSupport {
 	}
 
 	/**
-	 * Closes any Apache Geode {@link GemFireCache} after test (class/suite) execution.
+	 * Closes any Apache Geode {@link ClientCache} after test (class/suite) execution.
 	 *
-	 * @see org.apache.geode.cache.GemFireCache
+	 * @see ClientCache
 	 */
 	@AfterClass
 	public static void closeAnyGemFireCache() {
@@ -288,7 +273,7 @@ public abstract class IntegrationTestsSupport {
 	/**
 	 * Closes any Apache Geode {@link Locator} after test (class/suite) execution.
 	 *
-	 * @see org.apache.geode.distributed.Locator
+	 * @see Locator
 	 */
 	@AfterClass
 	public static void closeAnyGemFireLocator() {
@@ -317,13 +302,13 @@ public abstract class IntegrationTestsSupport {
 			try {
 
 				Field instance = ReflectionUtils.findField(SSLConfigurationFactory.class, "instance",
-					SSLConfigurationFactory.class);
+						SSLConfigurationFactory.class);
 
 				Optional.ofNullable(instance)
-					.ifPresent(field -> {
-						ReflectionUtils.makeAccessible(field);
-						ReflectionUtils.setField(field, null, null);
-					});
+						.ifPresent(field -> {
+							ReflectionUtils.makeAccessible(field);
+							ReflectionUtils.setField(field, null, null);
+						});
 			}
 			catch (Throwable ignore) {
 				// Not much we can do about it now!
@@ -334,14 +319,14 @@ public abstract class IntegrationTestsSupport {
 	/**
 	 * Deletes any Apache Geode process ID ({@literal PID}) {@link File Files} after test (class/suite) execution.
 	 *
-	 * @see java.io.File
+	 * @see File
 	 */
 	@AfterClass
 	public static void deleteAllGemFireProcessIdFiles() {
 
 		FileFilter fileFilter = file -> file != null
-			&& file.getName().startsWith("vf.gf")
-			&& file.getName().endsWith(".pid");
+				&& file.getName().startsWith("vf.gf")
+				&& file.getName().endsWith(".pid");
 
 		FileSystemUtils.deleteRecursive(FileSystemUtils.WORKING_DIRECTORY, fileFilter);
 	}
@@ -359,14 +344,14 @@ public abstract class IntegrationTestsSupport {
 	 * Unregisters all Apache Geode {@link DataSerializer DataSerializers} from Apache Geode's serialization framework
 	 * (subsystem) after test (class/suite) execution.
 	 *
-	 * @see org.apache.geode.DataSerializer
+	 * @see DataSerializer
 	 */
 	@AfterClass
 	public static void unregisterAllDataSerializers() {
 
 		Arrays.stream(ArrayUtils.nullSafeArray(InternalDataSerializer.getSerializers(), DataSerializer.class))
-			.map(DataSerializer::getId)
-			.forEach(InternalDataSerializer::unregister);
+				.map(DataSerializer::getId)
+				.forEach(InternalDataSerializer::unregister);
 	}
 
 	/**
@@ -374,26 +359,13 @@ public abstract class IntegrationTestsSupport {
 	 * after test (class/suite) execution.
 	 *
 	 * @see org.apache.geode.cache.execute.Function
-	 * @see org.apache.geode.cache.execute.FunctionService
+	 * @see FunctionService
 	 */
 	@AfterClass
 	public static void unregisterFunctions() {
 
 		CollectionUtils.nullSafeMap(FunctionService.getRegisteredFunctions())
-			.forEach((functionId, function) -> FunctionService.unregisterFunction(functionId));
-	}
-
-	/**
-	 * Loads any {@literal test.properties} before test execution.
-	 *
-	 * Additionally, any {@link System} defined test properties (i.e. properties prefixed with {@literal system.})
-	 * are set in the {@link System#getProperties()}.
-	 *
-	 * @see org.springframework.data.gemfire.tests.config.TestProperties
-	 */
-	@BeforeClass
-	public static void loadTestProperties() {
-		TestProperties.getInstance().configureSystemProperties();
+				.forEach((functionId, function) -> FunctionService.unregisterFunction(functionId));
 	}
 
 	/**
@@ -410,7 +382,7 @@ public abstract class IntegrationTestsSupport {
 	/**
 	 * Stores a reference to the optionally autowired/injected Spring {@link ApplicationContext} in the global context.
 	 *
-	 * @see org.springframework.context.ConfigurableApplicationContext
+	 * @see ConfigurableApplicationContext
 	 */
 	@Before
 	public void referenceApplicationContext() {
@@ -420,9 +392,9 @@ public abstract class IntegrationTestsSupport {
 	public static void closeApplicationContext(@Nullable ApplicationContext applicationContext) {
 
 		Optional.ofNullable(applicationContext)
-			.filter(ConfigurableApplicationContext.class::isInstance)
-			.map(ConfigurableApplicationContext.class::cast)
-			.ifPresent(ConfigurableApplicationContext::close);
+				.filter(ConfigurableApplicationContext.class::isInstance)
+				.map(ConfigurableApplicationContext.class::cast)
+				.ifPresent(ConfigurableApplicationContext::close);
 	}
 
 	public static void closeGemFireCacheWaitOnCacheClosedEvent() {
@@ -430,23 +402,23 @@ public abstract class IntegrationTestsSupport {
 	}
 
 	public static void closeGemFireCacheWaitOnCacheClosedEvent(long duration) {
-		closeGemFireCacheWaitOnCacheClosedEvent(GemfireUtils::resolveGemFireCache, duration);
+		closeGemFireCacheWaitOnCacheClosedEvent(GemfireUtils::getClientCache, duration);
 	}
 
-	public static void closeGemFireCacheWaitOnCacheClosedEvent(@NonNull Supplier<GemFireCache> cacheSupplier) {
+	public static void closeGemFireCacheWaitOnCacheClosedEvent(@NonNull Supplier<ClientCache> cacheSupplier) {
 		closeGemFireCacheWaitOnCacheClosedEvent(cacheSupplier, DEFAULT_WAIT_DURATION);
 	}
 
-	public static void closeGemFireCacheWaitOnCacheClosedEvent(@NonNull Supplier<GemFireCache> cacheSupplier,
-			@NonNull Function<GemFireCache, GemFireCache> cacheClosingFunction) {
+	public static void closeGemFireCacheWaitOnCacheClosedEvent(@NonNull Supplier<ClientCache> cacheSupplier,
+																														 @NonNull Function<ClientCache, ClientCache> cacheClosingFunction) {
 
 		closeGemFireCacheWaitOnCacheClosedEvent(cacheSupplier, cacheClosingFunction, DEFAULT_WAIT_DURATION);
 	}
 
-	public static void closeGemFireCacheWaitOnCacheClosedEvent(@NonNull Supplier<GemFireCache> cacheSupplier,
-			long duration) {
+	public static void closeGemFireCacheWaitOnCacheClosedEvent(@NonNull Supplier<ClientCache> cacheSupplier,
+																														 long duration) {
 
-		Function<GemFireCache, GemFireCache> cacheClosingFunction = cacheToClose -> {
+		Function<ClientCache, ClientCache> cacheClosingFunction = cacheToClose -> {
 
 			((ClientCache) cacheToClose).close(false);
 
@@ -457,18 +429,18 @@ public abstract class IntegrationTestsSupport {
 
 	}
 
-	public static void closeGemFireCacheWaitOnCacheClosedEvent(@NonNull Supplier<GemFireCache> cacheSupplier,
-			@NonNull Function<GemFireCache, GemFireCache> cacheClosingFunction, long duration) {
+	public static void closeGemFireCacheWaitOnCacheClosedEvent(@NonNull Supplier<ClientCache> cacheSupplier,
+																														 @NonNull Function<ClientCache, ClientCache> cacheClosingFunction, long duration) {
 
 		AtomicBoolean closed = new AtomicBoolean(false);
 
 		waitOn(() -> {
 			try {
 				return Optional.ofNullable(cacheSupplier.get())
-					.filter(cache -> !closed.get())
-					.map(cacheClosingFunction)
-					.map(cacheLifecycleListener::isClosed)
-					.orElse(true);
+						.filter(cache -> !closed.get())
+						.map(cacheClosingFunction)
+						.map(cacheLifecycleListener::isClosed)
+						.orElse(true);
 			}
 			catch (CacheClosedException ignore) {
 				closed.set(true);
@@ -488,13 +460,13 @@ public abstract class IntegrationTestsSupport {
 		waitOn(() -> {
 			try {
 				return Optional.ofNullable(Locator.getLocator())
-					.filter(it -> !stopped.get())
-					.map(IntegrationTestsSupport::stop)
-					.map(it -> {
-						stopped.set(!Locator.hasLocator());
-						return stopped.get();
-					})
-					.orElse(true);
+						.filter(it -> !stopped.get())
+						.map(IntegrationTestsSupport::stop)
+						.map(it -> {
+							stopped.set(!Locator.hasLocator());
+							return stopped.get();
+						})
+						.orElse(true);
 			}
 			catch (Exception ignore) {
 				stopped.set(true);
@@ -506,11 +478,11 @@ public abstract class IntegrationTestsSupport {
 	private static @Nullable Locator stop(@Nullable Locator locator) {
 
 		return Optional.ofNullable(locator)
-			.map(it -> {
-				it.stop();
-				return it;
-			})
-			.orElse(locator);
+				.map(it -> {
+					it.stop();
+					return it;
+				})
+				.orElse(locator);
 	}
 
 	protected static @NonNull String asApplicationName(@NonNull Class<?> type) {
@@ -518,8 +490,30 @@ public abstract class IntegrationTestsSupport {
 	}
 
 	protected static @NonNull String asDirectoryName(@NonNull Class<?> type) {
-		return String.format(DIRECTORY_NAME_FORMAT, asApplicationName(type),
-			LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN)));
+		return asUniqueDirectoryName(type);
+	}
+
+	private static @NonNull String asQualifiedDirectoryName(@NonNull Class<?> type) {
+
+		String qualifiedDirectoryName = asApplicationName(type);
+
+		Class<?> declaringType = type.getDeclaringClass();
+
+		while (declaringType != null) {
+			qualifiedDirectoryName = asApplicationName(declaringType).concat(".").concat(qualifiedDirectoryName);
+			declaringType = declaringType.getDeclaringClass();
+		}
+
+		return qualifiedDirectoryName;
+	}
+
+	private static @NonNull String asTimestampedDirectoryName(@NonNull Class<?> type) {
+		return String.format(DIRECTORY_NAME_FORMAT, asQualifiedDirectoryName(type),
+				LocalDateTime.now().format(DateTimeFormatter.ofPattern(DATE_TIME_PATTERN)));
+	}
+
+	private static @NonNull String asUniqueDirectoryName(@NonNull Class<?> type) {
+		return String.format(DIRECTORY_NAME_FORMAT, asTimestampedDirectoryName(type), UUID.randomUUID());
 	}
 
 	protected static @NonNull File createDirectory(@NonNull String pathname) {
@@ -529,12 +523,12 @@ public abstract class IntegrationTestsSupport {
 	protected static @NonNull File createDirectory(@NonNull File directory) {
 
 		assertThat(directory)
-			.describedAs("A File reference to the directory to create must not be null")
-			.isNotNull();
+				.describedAs("A File reference to the directory to create must not be null")
+				.isNotNull();
 
 		assertThat(directory.isDirectory() || directory.mkdirs())
-			.describedAs(String.format("Failed to create directory [%s]", directory))
-			.isTrue();
+				.describedAs(String.format("Failed to create directory [%s]", directory))
+				.isTrue();
 
 		if (isDeleteDirectoryOnExit()) {
 			directory.deleteOnExit();
@@ -543,9 +537,13 @@ public abstract class IntegrationTestsSupport {
 		return directory;
 	}
 
+	protected static boolean removeRecursiveDirectory(@NonNull File directory) {
+		return directory != null && directory.isDirectory() && FileSystemUtils.deleteRecursive(directory);
+	}
+
 	protected static boolean isDeleteDirectoryOnExit() {
 		return !System.getProperties().containsKey(DIRECTORY_DELETE_ON_EXIT_PROPERTY)
-			|| Boolean.getBoolean(DIRECTORY_DELETE_ON_EXIT_PROPERTY);
+				|| Boolean.getBoolean(DIRECTORY_DELETE_ON_EXIT_PROPERTY);
 	}
 
 	protected boolean isQueryDebuggingEnabled() {
@@ -598,7 +596,7 @@ public abstract class IntegrationTestsSupport {
 
 	protected static void logSystemProperties() throws IOException {
 		FileUtils.write(new File(SYSTEM_PROPERTIES_LOG_FILE),
-			String.format("%s", CollectionUtils.toString(System.getProperties())));
+				String.format("%s", CollectionUtils.toString(System.getProperties())));
 	}
 
 	protected static boolean waitOn(@NonNull Condition condition) {
@@ -643,7 +641,7 @@ public abstract class IntegrationTestsSupport {
 	}
 
 	protected static abstract class AbstractApplicationEventPublisherCacheLifecycleListenerAdapter
-			implements ApplicationEventPublisherAware, CacheLifecycleListener {
+			implements ApplicationEventPublisherAware {
 
 		private ApplicationEventPublisher applicationEventPublisher;
 
@@ -658,84 +656,37 @@ public abstract class IntegrationTestsSupport {
 		protected Optional<ApplicationEventPublisher> getApplicationEventPublisher() {
 			return Optional.ofNullable(this.applicationEventPublisher);
 		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void cacheCreated(InternalCache cache) {
-			getApplicationEventPublisher().ifPresent(eventPublisher ->
-				eventPublisher.publishEvent(new CacheCreatedEvent(cache)));
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void cacheClosed(InternalCache cache) {
-			getApplicationEventPublisher().ifPresent(eventPublisher ->
-				eventPublisher.publishEvent(new CacheClosedEvent(cache)));
-		}
 	}
 
 	public static final class TestContextCacheLifecycleListenerAdapter
 			extends AbstractApplicationEventPublisherCacheLifecycleListenerAdapter {
 
 		private static final AtomicReference<TestContextCacheLifecycleListenerAdapter> INSTANCE =
-			new AtomicReference<>(null);
+				new AtomicReference<>(null);
 
 		public static TestContextCacheLifecycleListenerAdapter getInstance() {
 			return INSTANCE.updateAndGet(instance -> instance != null ? instance
-				: newTestContextCacheLifecycleListenerAdapter());
+					: newTestContextCacheLifecycleListenerAdapter());
 		}
 
 		private static TestContextCacheLifecycleListenerAdapter newTestContextCacheLifecycleListenerAdapter() {
-			return registerCacheLifecycleListener(new TestContextCacheLifecycleListenerAdapter());
+			return new TestContextCacheLifecycleListenerAdapter();
 		}
 
-		private static @NonNull <T extends CacheLifecycleListener> T registerCacheLifecycleListener(@NonNull T listener) {
-			GemFireCacheImpl.addCacheLifecycleListener(listener);
-			return listener;
-		}
-
-		private final Map<GemFireCache, Object> cacheInstances = Collections.synchronizedMap(new WeakHashMap<>());
+		private final Map<ClientCache, Object> cacheInstances = Collections.synchronizedMap(new WeakHashMap<>());
 
 		private TestContextCacheLifecycleListenerAdapter() { }
 
-		public boolean isClosed(@Nullable GemFireCache cache) {
+		public boolean isClosed(@Nullable ClientCache cache) {
 			return cache == null || (cache.isClosed() && isCacheClosed(cache));
 		}
 
-		private boolean isCacheClosed(@Nullable GemFireCache cache) {
+		private boolean isCacheClosed(@Nullable ClientCache cache) {
 			return !isOpen(cache);
 		}
 
-		public boolean isOpen(@Nullable GemFireCache cache) {
+		public boolean isOpen(@Nullable ClientCache cache) {
 			return this.cacheInstances.containsKey(cache);
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void cacheCreated(@NonNull InternalCache cache) {
-
-			if (cache != null) {
-				this.cacheInstances.put(cache, this);
-				super.cacheCreated(cache);
-			}
-		}
-
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void cacheClosed(@NonNull InternalCache cache) {
-
-			if (cache != null) {
-				this.cacheInstances.remove(cache, this);
-				super.cacheClosed(cache);
-			}
 		}
 	}
 
@@ -746,25 +697,25 @@ public abstract class IntegrationTestsSupport {
 			return target;
 		}
 
-		protected AbstractCacheEvent(@NonNull GemFireCache cache) {
-			super(requireNonNull(cache, "GemFireCache must not be null"));
+		protected AbstractCacheEvent(@NonNull ClientCache cache) {
+			super(requireNonNull(cache, "ClientCache must not be null"));
 		}
 
-		public @NonNull GemFireCache getCache() {
-			return (GemFireCache) getSource();
+		public @NonNull ClientCache getCache() {
+			return (ClientCache) getSource();
 		}
 	}
 
 	public static class CacheCreatedEvent extends AbstractCacheEvent {
 
-		public CacheCreatedEvent(@NonNull GemFireCache cache) {
+		public CacheCreatedEvent(@NonNull ClientCache cache) {
 			super(cache);
 		}
 	}
 
 	public static class CacheClosedEvent extends AbstractCacheEvent {
 
-		public CacheClosedEvent(@NonNull GemFireCache cache) {
+		public CacheClosedEvent(@NonNull ClientCache cache) {
 			super(cache);
 		}
 	}

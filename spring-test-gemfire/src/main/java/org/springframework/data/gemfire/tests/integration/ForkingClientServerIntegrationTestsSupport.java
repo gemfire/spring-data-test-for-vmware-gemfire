@@ -19,11 +19,9 @@ import java.util.function.Function;
 
 import org.junit.AfterClass;
 
-import org.apache.geode.cache.Cache;
 import org.apache.geode.cache.client.ClientCache;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -40,10 +38,9 @@ import org.springframework.lang.Nullable;
 
 /**
  * The {@link ForkingClientServerIntegrationTestsSupport} class is an abstract base class used to configure
- * and bootstrap Apache Geode or VMware GemFire Server {@link Cache} and {@link ClientCache} applications.
+ * and bootstrap Apache Geode or VMware GemFire {@link ClientCache} applications.
  *
  * @author John Blum
- * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
  * @see org.springframework.data.gemfire.config.annotation.EnablePdx

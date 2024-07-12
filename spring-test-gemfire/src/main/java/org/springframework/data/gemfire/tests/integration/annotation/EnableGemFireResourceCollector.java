@@ -28,7 +28,7 @@ import org.springframework.test.context.event.AfterTestClassEvent;
  * @see java.lang.annotation.Inherited
  * @see java.lang.annotation.Retention
  * @see java.lang.annotation.Target
- * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.client.ClientCache
  * @see org.springframework.context.annotation.Import
  * @since 0.0.17
  */

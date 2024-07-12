@@ -18,7 +18,7 @@ import java.util.Properties;
 
 import org.junit.Test;
 
-import org.apache.geode.cache.GemFireCache;
+import org.apache.geode.cache.client.ClientCache;
 import org.apache.geode.distributed.DistributedSystem;
 
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
@@ -32,7 +32,7 @@ import org.springframework.data.gemfire.util.PropertiesBuilder;
  * @see java.util.Properties
  * @see org.junit.Test
  * @see org.mockito.Mockito
- * @see org.apache.geode.cache.GemFireCache
+ * @see org.apache.geode.cache.client.ClientCache
  * @see org.apache.geode.distributed.DistributedSystem
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.client.PoolFactoryBean
@@ -147,7 +147,7 @@ public class GemFireMockObjectsBeanPostProcessorUnitTests {
 
 		doReturn(gemfireProperties).when(beanPostProcessor).getGemFireProperties();
 
-		GemFireCache mockCache = mock(GemFireCache.class);
+		ClientCache mockCache = mock(ClientCache.class);
 
 		DistributedSystem mockDistributedSystem = mock(DistributedSystem.class);
 
