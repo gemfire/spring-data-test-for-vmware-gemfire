@@ -6,7 +6,8 @@
 plugins {
   id("java-library")
   alias(libs.plugins.lombok)
-  id("gemfire-repo-artifact-publishing")
+	id("gemfire-repo-artifact-publishing")
+  id("commercial-repositories")
 }
 
 java {
@@ -14,11 +15,6 @@ java {
   withSourcesJar()
 
   toolchain { languageVersion.set(JavaLanguageVersion.of(17)) }
-}
-
-repositories {
-  mavenCentral()
-  maven { url = uri("https://repo.spring.io/milestone") }
 }
 
 tasks.named<Javadoc>("javadoc") {
