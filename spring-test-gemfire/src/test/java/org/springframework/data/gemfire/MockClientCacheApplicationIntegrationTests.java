@@ -93,11 +93,11 @@ public class MockClientCacheApplicationIntegrationTests {
   static class TestConfiguration {
 
     @Bean("Example")
-    public ClientRegionFactoryBean<Object, Object> exampleRegion(GemFireCache gemfireCache) {
+    public ClientRegionFactoryBean<Object, Object> exampleRegion(ClientCache clientCache) {
 
       ClientRegionFactoryBean<Object, Object> exampleRegion = new ClientRegionFactoryBean<>();
 
-      exampleRegion.setCache(gemfireCache);
+      exampleRegion.setCache(clientCache);
       exampleRegion.setClose(false);
       exampleRegion.setShortcut(ClientRegionShortcut.LOCAL);
 

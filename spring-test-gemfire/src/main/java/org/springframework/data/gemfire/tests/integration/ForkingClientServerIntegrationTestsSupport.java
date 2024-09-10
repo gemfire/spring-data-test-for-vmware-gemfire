@@ -4,6 +4,24 @@
  */
 package org.springframework.data.gemfire.tests.integration;
 
+import org.apache.geode.cache.Cache;
+import org.apache.geode.cache.client.ClientCache;
+import org.junit.AfterClass;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
+import org.springframework.data.gemfire.config.annotation.EnablePdx;
+import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
+import org.springframework.data.gemfire.tests.process.JavaProcessRunner;
+import org.springframework.data.gemfire.tests.process.ProcessWrapper;
+import org.springframework.data.gemfire.tests.util.SpringUtils;
+import org.springframework.data.gemfire.util.ArrayUtils;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -17,28 +35,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import org.junit.AfterClass;
-
-import org.apache.geode.cache.Cache;
-import org.apache.geode.cache.client.ClientCache;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.data.gemfire.config.annotation.CacheServerApplication;
-import org.springframework.data.gemfire.config.annotation.ClientCacheApplication;
-import org.springframework.data.gemfire.config.annotation.EnablePdx;
-import org.springframework.data.gemfire.tests.integration.config.ClientServerIntegrationTestsConfiguration;
-import org.springframework.data.gemfire.tests.process.JavaProcessRunner;
-import org.springframework.data.gemfire.tests.process.ProcessWrapper;
-import org.springframework.data.gemfire.tests.util.SpringUtils;
-import org.springframework.data.gemfire.util.ArrayUtils;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
-
 /**
  * The {@link ForkingClientServerIntegrationTestsSupport} class is an abstract base class used to configure
  * and bootstrap Apache Geode or VMware GemFire Server {@link Cache} and {@link ClientCache} applications.
@@ -46,7 +42,6 @@ import org.springframework.lang.Nullable;
  * @author John Blum
  * @see org.apache.geode.cache.Cache
  * @see org.apache.geode.cache.client.ClientCache
- * @see org.springframework.data.gemfire.config.annotation.CacheServerApplication
  * @see org.springframework.data.gemfire.config.annotation.ClientCacheApplication
  * @see org.springframework.data.gemfire.config.annotation.EnablePdx
  * @see org.springframework.data.gemfire.tests.integration.ClientServerIntegrationTestsSupport
@@ -233,19 +228,6 @@ public abstract class ForkingClientServerIntegrationTestsSupport extends ClientS
 	@ClientCacheApplication
 	public static class BaseGemFireClientConfiguration extends ClientServerIntegrationTestsConfiguration {
 
-	}
-
-	@EnablePdx
-	@CacheServerApplication(name = "ForkingClientServerIntegrationTestsSupport")
-	public static class BaseGemFireServerConfiguration extends ClientServerIntegrationTestsConfiguration {
-
-		public static void main(String[] args) {
-
-			AnnotationConfigApplicationContext applicationContext =
-				new AnnotationConfigApplicationContext(BaseGemFireServerConfiguration.class);
-
-			applicationContext.registerShutdownHook();
-		}
 	}
 
 	@Configuration

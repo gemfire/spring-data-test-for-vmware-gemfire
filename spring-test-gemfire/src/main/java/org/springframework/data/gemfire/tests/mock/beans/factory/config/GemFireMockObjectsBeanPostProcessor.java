@@ -17,7 +17,7 @@ import org.apache.geode.distributed.DistributedSystem;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.data.gemfire.CacheFactoryBean;
+import org.springframework.data.gemfire.AbstractBasicCacheFactoryBean;
 import org.springframework.data.gemfire.client.ClientCacheFactoryBean;
 import org.springframework.data.gemfire.client.PoolFactoryBean;
 import org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport;
@@ -37,7 +37,6 @@ import org.springframework.lang.Nullable;
  * @see org.apache.geode.cache.client.PoolFactory
  * @see org.apache.geode.distributed.DistributedSystem
  * @see org.springframework.beans.factory.config.BeanPostProcessor
- * @see org.springframework.data.gemfire.CacheFactoryBean
  * @see org.springframework.data.gemfire.client.ClientCacheFactoryBean
  * @see org.springframework.data.gemfire.client.PoolFactoryBean
  * @see org.springframework.data.gemfire.tests.mock.GemFireMockObjectsSupport
@@ -88,7 +87,7 @@ public class GemFireMockObjectsBeanPostProcessor implements BeanPostProcessor {
 			throws BeansException {
 
 		return isGemFireProperties(bean, beanName) ? set((Properties) bean)
-			: isCacheFactoryBean(bean) ? spyOnCacheFactoryBean((CacheFactoryBean) bean, isUsingSingletonCache())
+			: isCacheFactoryBean(bean) ? spyOnCacheFactoryBean((ClientCacheFactoryBean) bean, isUsingSingletonCache())
 			: isPoolFactoryBean(bean) ? mockPoolFactoryBean((PoolFactoryBean) bean)
 			: bean;
 	}
@@ -120,7 +119,7 @@ public class GemFireMockObjectsBeanPostProcessor implements BeanPostProcessor {
 	}
 
 	private boolean isCacheFactoryBean(@Nullable Object bean) {
-		return bean instanceof CacheFactoryBean;
+		return bean instanceof ClientCacheFactoryBean;
 	}
 
 	private boolean isGemFireProperties(@Nullable Object bean, @Nullable String beanName) {
@@ -146,45 +145,17 @@ public class GemFireMockObjectsBeanPostProcessor implements BeanPostProcessor {
 		return this.gemfireProperties.get();
 	}
 
-	private @NonNull Object spyOnCacheFactoryBean(@NonNull CacheFactoryBean bean, boolean useSingletonCache) {
+	private @NonNull Object spyOnCacheFactoryBean(@NonNull ClientCacheFactoryBean bean, boolean useSingletonCache) {
 
-		return bean instanceof ClientCacheFactoryBean
-			? SpyingClientCacheFactoryInitializer.spyOn((ClientCacheFactoryBean) bean, useSingletonCache)
-			: SpyingCacheFactoryInitializer.spyOn(bean, useSingletonCache);
+		return SpyingClientCacheFactoryInitializer.spyOn(bean, useSingletonCache);
 	}
 
 	private @NonNull Object mockPoolFactoryBean(@NonNull PoolFactoryBean bean) {
 		return MockingPoolFactoryInitializer.mock(bean);
 	}
 
-	protected static class SpyingCacheFactoryInitializer
-			implements CacheFactoryBean.CacheFactoryInitializer<CacheFactory> {
-
-		protected static CacheFactoryBean spyOn(CacheFactoryBean cacheFactoryBean, boolean useSingletonCache) {
-
-			cacheFactoryBean.setCacheFactoryInitializer(new SpyingCacheFactoryInitializer(useSingletonCache));
-
-			return cacheFactoryBean;
-		}
-
-		private final boolean useSingletonCache;
-
-		protected SpyingCacheFactoryInitializer(boolean useSingletonCache) {
-			this.useSingletonCache = useSingletonCache;
-		}
-
-		protected boolean isUsingSingletonCache() {
-			return this.useSingletonCache;
-		}
-
-		@Override
-		public CacheFactory initialize(CacheFactory cacheFactory) {
-			return GemFireMockObjectsSupport.spyOn(cacheFactory, isUsingSingletonCache());
-		}
-	}
-
 	protected static class SpyingClientCacheFactoryInitializer
-			implements CacheFactoryBean.CacheFactoryInitializer<ClientCacheFactory> {
+			implements AbstractBasicCacheFactoryBean.CacheFactoryInitializer<ClientCacheFactory> {
 
 		protected static ClientCacheFactoryBean spyOn(ClientCacheFactoryBean clientCacheFactoryBean,
 				boolean useSingletonCache) {
